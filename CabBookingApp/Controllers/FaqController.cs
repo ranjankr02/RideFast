@@ -113,7 +113,7 @@ public class FaqController : Controller
         new() {
             Category = "Cancellation & Refunds", CategoryIcon = "bi-x-circle",
             Question = "How do I cancel a booking?",
-            Answer   = "To cancel a booking, go to 'My Bookings', find the trip you wish to cancel, and click the Delete button. You can also call our support number at +91 98765 43210 to cancel over the phone. Please try to cancel at least 4 hours before the scheduled departure.",
+            Answer   = "To cancel a booking, go to 'My Bookings', find the trip you wish to cancel, and click the Delete button. You can also call our support number at +91 85849 64672 to cancel over the phone. Please try to cancel at least 4 hours before the scheduled departure.",
             IsPopular = true
         },
         new() {
@@ -139,7 +139,7 @@ public class FaqController : Controller
         new() {
             Category = "Safety", CategoryIcon = "bi-shield-check",
             Question = "What should I do if I feel unsafe during a ride?",
-            Answer   = "Call our emergency support number (+91 98765 43210) immediately or ask the driver to stop at the nearest police station or public place. Share your live location with a trusted contact. After the trip, report the incident to us — we take all safety concerns very seriously and will act promptly.",
+            Answer   = "Call our emergency support number (+91 85849 64672) immediately or ask the driver to stop at the nearest police station or public place. Share your live location with a trusted contact. After the trip, report the incident to us — we take all safety concerns very seriously and will act promptly.",
             IsPopular = false
         },
         new() {
@@ -153,13 +153,13 @@ public class FaqController : Controller
         new() {
             Category = "Customer Support", CategoryIcon = "bi-headset",
             Question = "How can I contact RideFast customer support?",
-            Answer   = "You can reach us via phone at +91 98765 43210, email at support@ridefast.in, or WhatsApp. Our support team is available 24 hours a day, 7 days a week. For non-urgent queries, use the contact details in the footer — we typically respond within 30 minutes.",
+            Answer   = "You can reach us via phone at +91 85849 64672, email at support@ridefast.in, or WhatsApp. Our support team is available 24 hours a day, 7 days a week. For non-urgent queries, use the contact details in the footer — we typically respond within 30 minutes.",
             IsPopular = true
         },
         new() {
             Category = "Customer Support", CategoryIcon = "bi-headset",
             Question = "What should I do if my driver doesn't show up?",
-            Answer   = "First, try calling the driver's number shared during booking confirmation. If unreachable after 5 minutes, call our support line at +91 98765 43210. We will arrange an alternate driver or provide a full refund if we cannot fulfill the booking in time.",
+            Answer   = "First, try calling the driver's number shared during booking confirmation. If unreachable after 5 minutes, call our support line at +91 85849 64672. We will arrange an alternate driver or provide a full refund if we cannot fulfill the booking in time.",
             IsPopular = false
         },
         new() {
