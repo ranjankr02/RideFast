@@ -1,0 +1,618 @@
+@{
+    ViewData["Title"] = "Home";
+    Layout = "_Layout";
+}
+
+<!-- ── Hero ── -->
+<section class="hero-section">
+
+    <!-- ── Travel Background Scene ── -->
+    <div class="hero-scene" aria-hidden="true">
+
+        <!-- Stars -->
+        <div class="hero-stars">
+            <span style="--x:4%;  --y:12%; --s:2px;  --d:0s"></span>
+            <span style="--x:9%;  --y:28%; --s:1.5px;--d:0.4s"></span>
+            <span style="--x:14%; --y:8%;  --s:1px;  --d:1s"></span>
+            <span style="--x:22%; --y:18%; --s:2px;  --d:0.7s"></span>
+            <span style="--x:28%; --y:5%;  --s:1.5px;--d:0.2s"></span>
+            <span style="--x:38%; --y:14%; --s:1px;  --d:1.3s"></span>
+            <span style="--x:46%; --y:7%;  --s:2px;  --d:0.5s"></span>
+            <span style="--x:55%; --y:20%; --s:1px;  --d:0.9s"></span>
+            <span style="--x:63%; --y:9%;  --s:1.5px;--d:0.3s"></span>
+            <span style="--x:72%; --y:15%; --s:2px;  --d:1.1s"></span>
+            <span style="--x:80%; --y:6%;  --s:1px;  --d:0.6s"></span>
+            <span style="--x:87%; --y:22%; --s:1.5px;--d:0.8s"></span>
+            <span style="--x:93%; --y:10%; --s:2px;  --d:0.1s"></span>
+            <span style="--x:98%; --y:18%; --s:1px;  --d:1.4s"></span>
+        </div>
+
+        <!-- Moon -->
+        <div class="hero-moon"></div>
+
+        <!-- City Skyline SVG -->
+        <svg class="city-svg" viewBox="0 0 1440 310" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <!-- Small window pattern -->
+                <pattern id="wp-sm" patternUnits="userSpaceOnUse" width="13" height="15">
+                    <rect x="1.5" y="1.5" width="4.5" height="5.5" fill="rgba(253,224,71,0.22)"/>
+                    <rect x="7.5" y="1.5" width="4.5" height="5.5" fill="rgba(253,224,71,0.14)"/>
+                    <rect x="1.5" y="9"   width="4.5" height="5"   fill="rgba(253,224,71,0.1)"/>
+                    <rect x="7.5" y="9"   width="4.5" height="5"   fill="rgba(253,224,71,0.16)"/>
+                </pattern>
+                <!-- Large window pattern -->
+                <pattern id="wp-lg" patternUnits="userSpaceOnUse" width="18" height="20">
+                    <rect x="2"  y="2"  width="6.5" height="8"  fill="rgba(253,224,71,0.2)"/>
+                    <rect x="10" y="2"  width="6.5" height="8"  fill="rgba(253,224,71,0.12)"/>
+                    <rect x="2"  y="12" width="6.5" height="7"  fill="rgba(253,224,71,0.14)"/>
+                    <rect x="10" y="12" width="6.5" height="7"  fill="rgba(253,224,71,0.1)"/>
+                </pattern>
+            </defs>
+
+            <!-- ─── Far background buildings (depth layer) ─── -->
+            <g fill="#1e3d70" opacity="0.38">
+                <rect x="0"    y="230" width="65"  height="80"/>
+                <rect x="70"   y="195" width="38"  height="115"/>
+                <rect x="115"  y="215" width="58"  height="95"/>
+                <rect x="180"  y="175" width="42"  height="135"/>
+                <rect x="228"  y="200" width="85"  height="110"/>
+                <rect x="320"  y="185" width="40"  height="125"/>
+                <rect x="366"  y="220" width="62"  height="90"/>
+                <!-- right far -->
+                <rect x="980"  y="210" width="68"  height="100"/>
+                <rect x="1055" y="192" width="42"  height="118"/>
+                <rect x="1105" y="218" width="78"  height="92"/>
+                <rect x="1192" y="193" width="38"  height="117"/>
+                <rect x="1240" y="212" width="82"  height="98"/>
+                <rect x="1332" y="188" width="42"  height="122"/>
+                <rect x="1382" y="218" width="58"  height="92"/>
+            </g>
+
+            <!-- ─── Near buildings – left cluster ─── -->
+            <!-- B1: short wide far-left -->
+            <rect x="0"   y="218" width="72"  height="52"  fill="#0c1933"/>
+            <rect x="0"   y="218" width="72"  height="52"  fill="url(#wp-sm)"/>
+
+            <!-- B2: tall thin with spire -->
+            <rect x="77"  y="138" width="40"  height="132" fill="#0d1f3c"/>
+            <rect x="77"  y="138" width="40"  height="132" fill="url(#wp-sm)"/>
+            <rect x="94"  y="108" width="5"   height="30"  fill="#0d1f3c"/>
+
+            <!-- B3: medium -->
+            <rect x="122" y="180" width="60"  height="90"  fill="#0e2244"/>
+            <rect x="122" y="180" width="60"  height="90"  fill="url(#wp-sm)"/>
+
+            <!-- B4: tallest left skyscraper -->
+            <rect x="187" y="95"  width="54"  height="175" fill="#0c1830"/>
+            <rect x="187" y="95"  width="54"  height="175" fill="url(#wp-lg)"/>
+            <rect x="211" y="68"  width="7"   height="27"  fill="#0c1830"/>
+            <!-- antenna light -->
+            <circle cx="214" cy="66" r="3" fill="rgba(239,68,68,0.8)" class="antenna-blink"/>
+
+            <!-- B5: short step -->
+            <rect x="246" y="212" width="44"  height="58"  fill="#0f253d"/>
+
+            <!-- B6: wide office block -->
+            <rect x="295" y="162" width="85"  height="108" fill="#0d2040"/>
+            <rect x="295" y="162" width="85"  height="108" fill="url(#wp-lg)"/>
+
+            <!-- B7: tall narrow -->
+            <rect x="385" y="118" width="42"  height="152" fill="#0c1933"/>
+            <rect x="385" y="118" width="42"  height="152" fill="url(#wp-sm)"/>
+            <rect x="403" y="92"  width="6"   height="26"  fill="#0c1933"/>
+
+            <!-- B8: wide short -->
+            <rect x="432" y="208" width="78"  height="62"  fill="#0e2040"/>
+            <rect x="432" y="208" width="78"  height="62"  fill="url(#wp-sm)"/>
+
+            <!-- ─── Center buildings (shorter so content is visible) ─── -->
+            <rect x="517"  y="228" width="48"  height="42"  fill="#0c1933"/>
+            <rect x="570"  y="218" width="34"  height="52"  fill="#0d1f3c"/>
+            <rect x="609"  y="232" width="66"  height="38"  fill="#0e2244"/>
+            <rect x="680"  y="222" width="40"  height="48"  fill="#0c1830"/>
+            <rect x="726"  y="234" width="58"  height="36"  fill="#0f253d"/>
+            <rect x="789"  y="220" width="37"  height="50"  fill="#0d2040"/>
+            <rect x="832"  y="226" width="70"  height="44"  fill="#0c1933"/>
+
+            <!-- ─── Near buildings – right cluster ─── -->
+            <!-- B9: skyscraper right -->
+            <rect x="909"  y="90"  width="58"  height="180" fill="#0c1933"/>
+            <rect x="909"  y="90"  width="58"  height="180" fill="url(#wp-lg)"/>
+            <rect x="934"  y="62"  width="8"   height="28"  fill="#0c1933"/>
+            <circle cx="938" cy="60" r="3" fill="rgba(239,68,68,0.8)" class="antenna-blink"/>
+
+            <!-- B10: wide office right -->
+            <rect x="972"  y="152" width="92"  height="118" fill="#0d2040"/>
+            <rect x="972"  y="152" width="92"  height="118" fill="url(#wp-lg)"/>
+
+            <!-- B11: tall thin right -->
+            <rect x="1069" y="126" width="44"  height="144" fill="#0c1933"/>
+            <rect x="1069" y="126" width="44"  height="144" fill="url(#wp-sm)"/>
+            <rect x="1088" y="100" width="6"   height="26"  fill="#0c1933"/>
+
+            <!-- B12: medium right -->
+            <rect x="1118" y="172" width="68"  height="98"  fill="#0e2244"/>
+            <rect x="1118" y="172" width="68"  height="98"  fill="url(#wp-sm)"/>
+
+            <!-- B13: tallest right skyscraper -->
+            <rect x="1191" y="78"  width="60"  height="192" fill="#0c1830"/>
+            <rect x="1191" y="78"  width="60"  height="192" fill="url(#wp-lg)"/>
+            <rect x="1218" y="50"  width="7"   height="28"  fill="#0c1830"/>
+            <circle cx="1221" cy="48" r="3" fill="rgba(239,68,68,0.8)" class="antenna-blink"/>
+
+            <!-- B14: wide medium far-right -->
+            <rect x="1256" y="145" width="82"  height="125" fill="#0d2040"/>
+            <rect x="1256" y="145" width="82"  height="125" fill="url(#wp-lg)"/>
+
+            <!-- B15: short right -->
+            <rect x="1343" y="190" width="48"  height="80"  fill="#0e2244"/>
+
+            <!-- B16: right edge -->
+            <rect x="1396" y="215" width="44"  height="55"  fill="#0c1933"/>
+
+            <!-- ─── Ground & Road ─── -->
+            <!-- Pavement / sidewalk -->
+            <rect x="0" y="263" width="1440" height="7" fill="#131f38"/>
+
+            <!-- Road surface -->
+            <rect x="0" y="270" width="1440" height="40" fill="#090e1c"/>
+
+            <!-- Road edge markings -->
+            <rect x="0" y="270" width="1440" height="2"  fill="#1e2d4a"/>
+            <rect x="0" y="308" width="1440" height="2"  fill="#1e2d4a"/>
+
+            <!-- Animated center dashes -->
+            <line class="road-center-line" x1="0" y1="290" x2="1440" y2="290"
+                  stroke="#f59e0b" stroke-width="3.5" stroke-dasharray="42 22"/>
+
+            <!-- Decorative stars in sky -->
+            <circle cx="120"  cy="35"  r="1.5" fill="rgba(255,255,255,0.7)"/>
+            <circle cx="310"  cy="58"  r="1"   fill="rgba(255,255,255,0.5)"/>
+            <circle cx="480"  cy="28"  r="1.5" fill="rgba(255,255,255,0.6)"/>
+            <circle cx="680"  cy="45"  r="1"   fill="rgba(255,255,255,0.4)"/>
+            <circle cx="850"  cy="22"  r="1.5" fill="rgba(255,255,255,0.7)"/>
+            <circle cx="1060" cy="50"  r="1"   fill="rgba(255,255,255,0.5)"/>
+            <circle cx="1250" cy="32"  r="1.5" fill="rgba(255,255,255,0.6)"/>
+            <circle cx="1400" cy="45"  r="1"   fill="rgba(255,255,255,0.4)"/>
+        </svg>
+
+        <!-- Animated taxi driving on road -->
+        <div class="hero-taxi">&#128661;</div>
+
+        <!-- Floating location pins -->
+        <div class="hero-pin" style="left:6%;top:38%;--d:0s">
+            <i class="bi bi-geo-alt-fill"></i>
+        </div>
+        <div class="hero-pin" style="left:91%;top:28%;--d:1.2s">
+            <i class="bi bi-geo-alt-fill"></i>
+        </div>
+        <div class="hero-pin" style="left:50%;top:22%;--d:2.1s">
+            <i class="bi bi-geo-alt-fill"></i>
+        </div>
+
+    </div>
+    <!-- ── End Background Scene ── -->
+
+    <div class="container position-relative" style="z-index:2">
+        <div class="row align-items-center gy-5 py-2">
+
+            <!-- Left: Hero text -->
+            <div class="col-lg-6 text-white">
+                <span class="badge bg-warning text-dark px-3 py-2 rounded-pill mb-3 d-inline-block fw-semibold">
+                    <i class="bi bi-star-fill me-1"></i> Most Trusted Cab Service
+                </span>
+                <h1 class="fw-bold mb-3" style="font-size:clamp(2.2rem,5vw,3.8rem);line-height:1.1">
+                    Your Ride,<br><span class="text-warning">Your Way.</span>
+                </h1>
+                <p class="text-white-75 mb-4" style="font-size:1.05rem;line-height:1.8;max-width:460px">
+                    Safe, comfortable and affordable cab rides — available around the clock.
+                    Book in seconds, arrive with confidence.
+                </p>
+                <div class="d-flex flex-wrap gap-2 mb-4">
+                    <span class="hero-pill"><i class="bi bi-shield-check me-1"></i>Safe & Secure</span>
+                    <span class="hero-pill"><i class="bi bi-clock me-1"></i>24/7 Available</span>
+                    <span class="hero-pill"><i class="bi bi-lightning-charge me-1"></i>Instant Booking</span>
+                    <span class="hero-pill"><i class="bi bi-currency-rupee me-1"></i>No Hidden Charges</span>
+                </div>
+                <div class="d-flex gap-3 flex-wrap">
+                    <a asp-controller="Routes" asp-action="Index" class="btn btn-outline-light btn-lg px-4 rounded-pill">
+                        <i class="bi bi-signpost-split me-2"></i>View All Routes
+                    </a>
+                </div>
+            </div>
+
+            <!-- Right: Quick Booking Widget -->
+            <div class="col-lg-6">
+                <div class="booking-widget">
+                    <div class="bw-header">
+                        <i class="bi bi-taxi-front text-warning me-2"></i>
+                        <span>Quick Booking</span>
+                    </div>
+                    <div class="bw-body">
+
+                        <!-- From / To -->
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="bw-label"><i class="bi bi-geo-alt text-success me-1"></i>From</label>
+                                <div class="bw-input-wrap">
+                                    <input type="text" id="qb-from" class="bw-input" value="Patna" placeholder="Pickup city" />
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <label class="bw-label"><i class="bi bi-geo-fill text-danger me-1"></i>To</label>
+                                <div class="bw-input-wrap">
+                                    <select id="qb-to" class="bw-input" onchange="refreshPrice()">
+                                        <option value="">Select destination</option>
+                                        <option value="Gorakhpur">Gorakhpur, UP</option>
+                                        <option value="Varanasi">Varanasi, UP</option>
+                                        <option value="Prayagraj">Prayagraj, UP</option>
+                                        <option value="Lucknow">Lucknow, UP</option>
+                                        <option value="Kanpur">Kanpur, UP</option>
+                                        <option value="Agra">Agra, UP</option>
+                                        <option value="Delhi">Delhi NCR</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Vehicle Type -->
+                        <label class="bw-label mb-2"><i class="bi bi-car-front me-1 text-warning"></i>Vehicle Type</label>
+                        <div class="vt-grid mb-3" id="vehicle-grid">
+                            <button type="button" class="vt-btn" data-v="Hatchback" onclick="selectVehicle(this)">
+                                <i class="bi bi-car-front"></i>
+                                <span class="vt-name">Hatchback</span>
+                                <span class="vt-cap">4 seats</span>
+                            </button>
+                            <button type="button" class="vt-btn" data-v="Sedan" onclick="selectVehicle(this)">
+                                <i class="bi bi-car-front-fill"></i>
+                                <span class="vt-name">Sedan</span>
+                                <span class="vt-cap">4 seats</span>
+                            </button>
+                            <button type="button" class="vt-btn" data-v="SUV" onclick="selectVehicle(this)">
+                                <i class="bi bi-truck-front-fill"></i>
+                                <span class="vt-name">SUV</span>
+                                <span class="vt-cap">6 seats</span>
+                            </button>
+                            <button type="button" class="vt-btn" data-v="Tempo Traveller" onclick="selectVehicle(this)">
+                                <i class="bi bi-bus-front-fill"></i>
+                                <span class="vt-name">Tempo</span>
+                                <span class="vt-cap">12 seats</span>
+                            </button>
+                        </div>
+
+                        <!-- Date & Time -->
+                        <label class="bw-label mb-1"><i class="bi bi-calendar-event me-1 text-warning"></i>Travel Date &amp; Time</label>
+                        <div class="bw-input-wrap mb-3">
+                            <input type="datetime-local" id="qb-datetime" class="bw-input" />
+                        </div>
+
+                        <!-- Price Estimate -->
+                        <div id="price-box" class="price-estimate-box d-none">
+                            <div class="d-flex align-items-center justify-content-between">
+                                <span class="price-label">
+                                    <i class="bi bi-lightning-charge-fill text-warning me-1"></i>Estimated Price
+                                </span>
+                                <span id="price-range" class="price-value"></span>
+                            </div>
+                            <div class="price-note">Inclusive of driver charges. Toll &amp; parking extra.</div>
+                        </div>
+
+                        <!-- No-route note -->
+                        <div id="no-price-box" class="no-price-box d-none">
+                            <i class="bi bi-info-circle me-1"></i>
+                            Custom route — price will be shared at confirmation.
+                        </div>
+
+                        <!-- Book Now -->
+                        <button type="button" class="bw-book-btn" onclick="bookNow()">
+                            <i class="bi bi-taxi-front me-2"></i>Book Now
+                            <i class="bi bi-arrow-right ms-1"></i>
+                        </button>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+<!-- ── Stats Strip ── -->
+<section class="stats-section">
+    <div class="container">
+        <div class="row g-0 text-center">
+            <div class="col-6 col-md-3 stat-item">
+                <div class="stat-number">15K+</div>
+                <div class="stat-label">Rides Completed</div>
+            </div>
+            <div class="col-6 col-md-3 stat-item">
+                <div class="stat-number">8K+</div>
+                <div class="stat-label">Happy Customers</div>
+            </div>
+            <div class="col-6 col-md-3 stat-item">
+                <div class="stat-number">50+</div>
+                <div class="stat-label">Cities Covered</div>
+            </div>
+            <div class="col-6 col-md-3 stat-item" style="border-right:none">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">Always Available</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── Features ── -->
+<section class="py-6 bg-light-gray">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <span class="section-badge">Our Services</span>
+            <h2 class="section-title mt-2">Why Ride With Us?</h2>
+            <p class="section-sub">Everything you need for a perfect journey, every time.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-sm-6 col-lg-4 d-flex">
+                <div class="feature-card w-100">
+                    <div class="feature-icon-wrap bg-blue-soft"><i class="bi bi-shield-check text-primary"></i></div>
+                    <h5>Safe &amp; Secure</h5>
+                    <p>All drivers are verified, trained, and background-checked. Your safety is our top priority.</p>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-4 d-flex">
+                <div class="feature-card w-100">
+                    <div class="feature-icon-wrap bg-green-soft"><i class="bi bi-clock-history text-success"></i></div>
+                    <h5>Always On Time</h5>
+                    <p>We value your time. Our drivers are punctual and committed to reaching you without delay.</p>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-4 d-flex">
+                <div class="feature-card w-100">
+                    <div class="feature-icon-wrap bg-yellow-soft"><i class="bi bi-currency-rupee text-warning"></i></div>
+                    <h5>Affordable Fares</h5>
+                    <p>Transparent pricing with zero hidden charges. Best fare for every trip, guaranteed.</p>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-4 d-flex">
+                <div class="feature-card w-100">
+                    <div class="feature-icon-wrap bg-purple-soft"><i class="bi bi-car-front text-purple"></i></div>
+                    <h5>Comfortable Rides</h5>
+                    <p>Clean, air-conditioned vehicles maintained to the highest standards for your comfort.</p>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-4 d-flex">
+                <div class="feature-card w-100">
+                    <div class="feature-icon-wrap bg-orange-soft"><i class="bi bi-lightning-charge text-orange"></i></div>
+                    <h5>Instant Booking</h5>
+                    <p>Book your ride in seconds. Advance scheduling available — plan at your convenience.</p>
+                </div>
+            </div>
+            <div class="col-sm-6 col-lg-4 d-flex">
+                <div class="feature-card w-100">
+                    <div class="feature-icon-wrap bg-teal-soft"><i class="bi bi-headset text-teal"></i></div>
+                    <h5>24/7 Support</h5>
+                    <p>Our dedicated support team is always ready to help you anytime, day or night.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── Why Choose Us ── -->
+<section class="py-6 bg-white">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <span class="section-badge">Why We're Different</span>
+                <h2 class="section-title mt-2">The #1 Trusted Cab Service in Town</h2>
+                <p class="text-muted mb-4" style="line-height:1.8">
+                    We have been serving thousands of happy customers with reliable, safe, and comfortable rides.
+                    Our commitment to quality makes us the first choice for daily commuters and business travelers.
+                </p>
+                <ul class="check-list mb-4">
+                    <li><i class="bi bi-check-circle-fill text-warning"></i>Verified and licensed professional drivers</li>
+                    <li><i class="bi bi-check-circle-fill text-warning"></i>No surge pricing — flat, transparent fares always</li>
+                    <li><i class="bi bi-check-circle-fill text-warning"></i>Pre-book for airport, outstation &amp; local trips</li>
+                    <li><i class="bi bi-check-circle-fill text-warning"></i>Clean and sanitized vehicles after every single ride</li>
+                    <li><i class="bi bi-check-circle-fill text-warning"></i>Real-time booking with instant confirmation</li>
+                    <li><i class="bi bi-check-circle-fill text-warning"></i>Dedicated 24/7 customer support helpline</li>
+                </ul>
+                <a asp-controller="Routes" asp-action="Index" class="btn btn-dark btn-lg px-4 rounded-pill">
+                    Browse All Routes <i class="bi bi-arrow-right ms-2"></i>
+                </a>
+            </div>
+            <div class="col-lg-6">
+                <div class="row g-3">
+                    <div class="col-6"><div class="trust-card dark text-center"><i class="bi bi-person-check fs-1"></i><div class="fw-bold mt-2 fs-5">Expert Drivers</div><div class="small opacity-75">Trained professionals</div></div></div>
+                    <div class="col-6"><div class="trust-card yellow text-center"><i class="bi bi-star-fill fs-1"></i><div class="fw-bold mt-2 fs-5">Top Rated</div><div class="small">4.9 / 5 Stars</div></div></div>
+                    <div class="col-6"><div class="trust-card yellow text-center"><i class="bi bi-geo-alt fs-1"></i><div class="fw-bold mt-2 fs-5">Wide Coverage</div><div class="small">50+ Cities</div></div></div>
+                    <div class="col-6"><div class="trust-card dark text-center"><i class="bi bi-shield-lock fs-1"></i><div class="fw-bold mt-2 fs-5">100% Safe</div><div class="small opacity-75">Fully Verified</div></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── Testimonials ── -->
+<section class="py-6 bg-light-gray">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <span class="section-badge">Testimonials</span>
+            <h2 class="section-title mt-2">What Our Riders Say</h2>
+            <p class="section-sub">Thousands of happy customers trust us every single day.</p>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4 d-flex">
+                <div class="review-card w-100">
+                    <div class="review-stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
+                    <p>"Absolutely the best cab service! The driver was on time, the car was spotless, and the fare was very reasonable. Highly recommend to everyone!"</p>
+                    <div class="review-author"><div class="review-avatar">RS</div><div><div class="fw-bold">Rahul Sharma</div><div class="small text-muted">Regular Customer, Mumbai</div></div></div>
+                </div>
+            </div>
+            <div class="col-md-4 d-flex">
+                <div class="review-card w-100">
+                    <div class="review-stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
+                    <p>"I book airport cabs regularly and this is my go-to service. Always punctual and professional. Never had a bad experience in two years."</p>
+                    <div class="review-author"><div class="review-avatar">PM</div><div><div class="fw-bold">Priya Mehta</div><div class="small text-muted">Business Traveler, Pune</div></div></div>
+                </div>
+            </div>
+            <div class="col-md-4 d-flex">
+                <div class="review-card w-100">
+                    <div class="review-stars"><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i></div>
+                    <p>"Great experience every single time. No hidden charges, friendly drivers, and super easy to book. A true 5-star service I tell all my friends about!"</p>
+                    <div class="review-author"><div class="review-avatar">AD</div><div><div class="fw-bold">Anita Desai</div><div class="small text-muted">Daily Commuter, Bangalore</div></div></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ── FAQ Preview ── -->
+<section class="py-6 bg-white">
+    <div class="container">
+        <div class="section-header text-center mb-5">
+            <span class="section-badge">Got Questions?</span>
+            <h2 class="section-title mt-2">Frequently Asked Questions</h2>
+            <p class="section-sub">Quick answers to the most common questions from our riders.</p>
+        </div>
+        <div class="row g-3 mb-4">
+            @{
+                var popularFaqs = CabBookingApp.Controllers.FaqController.GetPopular(8);
+                int previewIdx = 0;
+            }
+            @foreach (var faq in popularFaqs)
+            {
+                previewIdx++;
+                var pid = "hp-faq-" + previewIdx;
+                <div class="col-lg-6">
+                    <div class="accordion hp-faq-accordion">
+                        <div class="accordion-item hp-faq-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button hp-faq-btn collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#@pid"
+                                        aria-expanded="false" aria-controls="@pid">
+                                    <i class="bi bi-question-circle-fill me-2 text-warning flex-shrink-0"></i>
+                                    @faq.Question
+                                </button>
+                            </h2>
+                            <div id="@pid" class="accordion-collapse collapse">
+                                <div class="accordion-body hp-faq-body">
+                                    @faq.Answer
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="text-center">
+            <a asp-controller="Faq" asp-action="Index" class="btn btn-dark btn-lg px-5 rounded-pill">
+                <i class="bi bi-patch-question me-2"></i>View All FAQs
+                <span class="badge bg-warning text-dark ms-2">25+</span>
+            </a>
+        </div>
+    </div>
+</section>
+
+<!-- ── CTA ── -->
+<section class="cta-section">
+    <div class="container text-center position-relative">
+        <h2 class="display-5 fw-bold text-white mb-3">Ready for Your Next Ride?</h2>
+        <p class="lead text-white-75 mb-4">Join 8,000+ happy customers who trust RideFast every day.</p>
+        <a asp-controller="Bookings" asp-action="Create" class="btn btn-warning btn-lg px-5 fw-bold rounded-pill shadow-lg">
+            <i class="bi bi-taxi-front me-2"></i>Book a Cab Now
+        </a>
+    </div>
+</section>
+
+@section Scripts {
+<script>
+const PRICES = {
+    "Gorakhpur":  { "Hatchback":[2200,2800], "Sedan":[2900,3600], "SUV":[4000,5000], "Tempo Traveller":[5500,7000] },
+    "Varanasi":   { "Hatchback":[2500,3200], "Sedan":[3200,4000], "SUV":[4500,5500], "Tempo Traveller":[6000,7500] },
+    "Prayagraj":  { "Hatchback":[2800,3500], "Sedan":[3800,4800], "SUV":[5200,6500], "Tempo Traveller":[7000,8500] },
+    "Lucknow":    { "Hatchback":[4500,5500], "Sedan":[5800,7200], "SUV":[7800,9800], "Tempo Traveller":[10500,13500] },
+    "Kanpur":     { "Hatchback":[4800,5800], "Sedan":[6200,7800], "SUV":[8200,10500],"Tempo Traveller":[11000,14500] },
+    "Agra":       { "Hatchback":[7500,9000], "Sedan":[9500,12000],"SUV":[13500,17000],"Tempo Traveller":[18000,23000] },
+    "Delhi":      { "Hatchback":[9500,11500],"Sedan":[12000,15000],"SUV":[16500,21000],"Tempo Traveller":[22000,28000] }
+};
+
+let selectedVehicle = null;
+
+function fmt(n) { return '₹' + n.toLocaleString('en-IN'); }
+
+function selectVehicle(btn) {
+    document.querySelectorAll('.vt-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedVehicle = btn.dataset.v;
+    refreshPrice();
+}
+
+function refreshPrice() {
+    const from    = (document.getElementById('qb-from').value || '').trim();
+    const to      = document.getElementById('qb-to').value;
+    const priceBox = document.getElementById('price-box');
+    const noPriceBox = document.getElementById('no-price-box');
+    const priceRange = document.getElementById('price-range');
+
+    priceBox.classList.add('d-none');
+    noPriceBox.classList.add('d-none');
+
+    if (!to) return;
+
+    const fromNorm = from.toLowerCase().replace(/\s/g,'');
+    const isPatna  = fromNorm === 'patna';
+
+    if (isPatna && selectedVehicle && PRICES[to] && PRICES[to][selectedVehicle]) {
+        const [min, max] = PRICES[to][selectedVehicle];
+        priceRange.textContent = fmt(min) + ' – ' + fmt(max);
+        priceBox.classList.remove('d-none');
+    } else if (to) {
+        if (!isPatna || !selectedVehicle) {
+            noPriceBox.classList.remove('d-none');
+        }
+    }
+}
+
+function bookNow() {
+    const from = (document.getElementById('qb-from').value || 'Patna').trim();
+    const to   = document.getElementById('qb-to').value;
+    const dt   = document.getElementById('qb-datetime').value;
+
+    if (!to) {
+        document.getElementById('qb-to').classList.add('bw-error');
+        document.getElementById('qb-to').focus();
+        return;
+    }
+    document.getElementById('qb-to').classList.remove('bw-error');
+
+    if (!selectedVehicle) {
+        document.getElementById('vehicle-grid').classList.add('vt-error');
+        return;
+    }
+    document.getElementById('vehicle-grid').classList.remove('vt-error');
+
+    let amount = 0;
+    const fromNorm = from.toLowerCase().replace(/\s/g,'');
+    if (fromNorm === 'patna' && PRICES[to] && PRICES[to][selectedVehicle]) {
+        amount = PRICES[to][selectedVehicle][0];
+    }
+
+    let url = '/Bookings/Create'
+        + '?source='      + encodeURIComponent(from)
+        + '&destination=' + encodeURIComponent(to)
+        + '&vehicleType=' + encodeURIComponent(selectedVehicle);
+    if (amount > 0) url += '&amount=' + amount;
+    if (dt)        url += '&travelDateTime=' + encodeURIComponent(dt);
+
+    window.location.href = url;
+}
+
+// default datetime = now + 1 hour
+(function() {
+    const d = new Date(Date.now() + 3600000);
+    const pad = n => String(n).padStart(2,'0');
+    document.getElementById('qb-datetime').value =
+        d.getFullYear() + '-' + pad(d.getMonth()+1) + '-' + pad(d.getDate())
+        + 'T' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+})();
+</script>
+}

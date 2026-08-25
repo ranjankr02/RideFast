@@ -1,0 +1,118 @@
+@model CabBookingApp.Models.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Create Account";
+}
+
+<div class="auth-page">
+    <div class="auth-card" style="max-width:480px">
+
+        <!-- Logo -->
+        <div class="auth-logo">
+            <span>&#128661;</span>
+            <span class="auth-brand">RideFast</span>
+        </div>
+
+        <h2 class="auth-title">Create your account</h2>
+        <p class="auth-sub">Join thousands of happy riders today</p>
+
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger d-flex align-items-center gap-2 rounded-3 mb-3 py-2" role="alert">
+            <i class="bi bi-exclamation-circle-fill flex-shrink-0"></i>
+            <div></div>
+        </div>
+
+        <form asp-action="Register" method="post" novalidate>
+            @Html.AntiForgeryToken()
+
+            <div class="mb-3">
+                <label asp-for="Name" class="form-label">
+                    <i class="bi bi-person me-1 text-warning"></i>Full Name
+                </label>
+                <input asp-for="Name" class="form-control form-control-lg"
+                       placeholder="Enter your full name" autofocus />
+                <span asp-validation-for="Name" class="text-danger small mt-1 d-block"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Email" class="form-label">
+                    <i class="bi bi-envelope me-1 text-warning"></i>Email Address
+                </label>
+                <input asp-for="Email" type="email" class="form-control form-control-lg"
+                       placeholder="you@example.com" autocomplete="email" />
+                <span asp-validation-for="Email" class="text-danger small mt-1 d-block"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="MobileNumber" class="form-label">
+                    <i class="bi bi-phone me-1 text-warning"></i>Mobile Number
+                </label>
+                <div class="input-group">
+                    <span class="input-group-text">+91</span>
+                    <input asp-for="MobileNumber" class="form-control form-control-lg"
+                           placeholder="10-digit mobile number"
+                           maxlength="10" inputmode="numeric" />
+                </div>
+                <span asp-validation-for="MobileNumber" class="text-danger small mt-1 d-block"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label">
+                    <i class="bi bi-lock me-1 text-warning"></i>Password
+                </label>
+                <div class="input-group">
+                    <input asp-for="Password" type="password" id="pwField"
+                           class="form-control form-control-lg"
+                           placeholder="At least 6 characters"
+                           autocomplete="new-password" />
+                    <button type="button" class="input-group-text bg-white border-start-0" onclick="togglePw('pwField','pwIcon')">
+                        <i class="bi bi-eye" id="pwIcon"></i>
+                    </button>
+                </div>
+                <span asp-validation-for="Password" class="text-danger small mt-1 d-block"></span>
+            </div>
+
+            <div class="mb-4">
+                <label asp-for="ConfirmPassword" class="form-label">
+                    <i class="bi bi-lock-fill me-1 text-warning"></i>Confirm Password
+                </label>
+                <div class="input-group">
+                    <input asp-for="ConfirmPassword" type="password" id="cpwField"
+                           class="form-control form-control-lg"
+                           placeholder="Re-enter your password"
+                           autocomplete="new-password" />
+                    <button type="button" class="input-group-text bg-white border-start-0" onclick="togglePw('cpwField','cpwIcon')">
+                        <i class="bi bi-eye" id="cpwIcon"></i>
+                    </button>
+                </div>
+                <span asp-validation-for="ConfirmPassword" class="text-danger small mt-1 d-block"></span>
+            </div>
+
+            <button type="submit" class="btn btn-warning btn-lg w-100 fw-bold rounded-pill mb-3">
+                <i class="bi bi-person-plus me-2"></i>Create Account
+            </button>
+
+            <p class="text-center text-muted small mb-0">
+                Already have an account?
+                <a asp-controller="Auth" asp-action="Login" class="auth-link fw-bold">Sign in</a>
+            </p>
+        </form>
+
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        function togglePw(fieldId, iconId) {
+            const f = document.getElementById(fieldId);
+            const i = document.getElementById(iconId);
+            if (f.type === 'password') {
+                f.type = 'text';
+                i.className = 'bi bi-eye-slash';
+            } else {
+                f.type = 'password';
+                i.className = 'bi bi-eye';
+            }
+        }
+    </script>
+}

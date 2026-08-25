@@ -1,0 +1,192 @@
+@model List<CabBookingApp.Models.FaqItem>
+
+@{
+    ViewData["Title"] = "FAQ";
+    var categories  = ViewBag.Categories  as List<string> ?? new();
+    var selectedCat = ViewBag.SelectedCat as string       ?? "All";
+    var searchQuery = ViewBag.SearchQuery as string       ?? "";
+    var totalCount  = (int)(ViewBag.TotalCount ?? 0);
+
+    var catIcons = new Dictionary<string, string>
+    {
+        ["Booking Process"]       = "bi-calendar-check",
+        ["Pricing & Payment"]     = "bi-currency-rupee",
+        ["Vehicles & Drivers"]    = "bi-car-front-fill",
+        ["Cancellation & Refunds"]= "bi-x-circle",
+        ["Safety"]                = "bi-shield-check",
+        ["Customer Support"]      = "bi-headset",
+    };
+
+    var grouped = Model.GroupBy(f => f.Category).ToList();
+    int itemIndex = 0;
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-2">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="breadcrumb-item active">FAQ</li>
+            </ol>
+        </nav>
+        <div class="d-flex align-items-start justify-content-between flex-wrap gap-3">
+            <div>
+                <h1 class="mb-1"><i class="bi bi-patch-question me-2"></i>Frequently Asked Questions</h1>
+                <p class="text-white-50 mb-0 small">Everything you need to know about RideFast — find answers instantly.</p>
+            </div>
+            <span class="badge bg-warning text-dark px-3 py-2 fs-6 align-self-center">
+                @totalCount answer@(totalCount != 1 ? "s" : "")
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+
+    <!-- ── Search Bar ── -->
+    <div class="faq-search-wrap">
+        <form asp-action="Index" method="get" class="faq-search-form" id="faqSearchForm">
+            <input type="hidden" name="category" value="@(selectedCat == "All" ? "" : selectedCat)" />
+            <div class="faq-search-box">
+                <i class="bi bi-search faq-search-icon"></i>
+                <input type="text" name="q" id="faqSearch" value="@searchQuery"
+                       class="faq-search-input" placeholder="Search questions…"
+                       autocomplete="off" />
+                @if (!string.IsNullOrEmpty(searchQuery))
+                {
+                    <a asp-action="Index" asp-route-category="@(selectedCat == "All" ? null : selectedCat)"
+                       class="faq-search-clear" title="Clear search">
+                        <i class="bi bi-x-lg"></i>
+                    </a>
+                }
+            </div>
+            <button type="submit" class="btn btn-warning fw-bold px-4 rounded-pill">Search</button>
+        </form>
+    </div>
+
+    <!-- ── Category Filter Pills ── -->
+    <div class="faq-cats mb-4">
+        <a asp-action="Index" asp-route-q="@searchQuery"
+           class="faq-cat-btn @(selectedCat == "All" ? "active" : "")">
+            <i class="bi bi-grid-3x3-gap-fill me-1"></i>All
+            <span class="faq-cat-count">@ViewBag.Categories?.Count</span>
+        </a>
+        @foreach (var cat in categories)
+        {
+            var icon = catIcons.TryGetValue(cat, out var ic) ? ic : "bi-question-circle";
+            var isActive = selectedCat == cat;
+            <a asp-action="Index" asp-route-category="@cat" asp-route-q="@searchQuery"
+               class="faq-cat-btn @(isActive ? "active" : "")">
+                <i class="bi @icon me-1"></i>@cat
+            </a>
+        }
+    </div>
+
+    <!-- ── Results or No-match ── -->
+    @if (!Model.Any())
+    {
+        <div class="faq-empty">
+            <i class="bi bi-search fs-1 text-muted d-block mb-3"></i>
+            <h5 class="text-muted">No results found</h5>
+            <p class="text-muted small mb-3">
+                We couldn't find any FAQs matching
+                @if (!string.IsNullOrEmpty(searchQuery)) { <strong>"@searchQuery"</strong> }
+                @if (selectedCat != "All") { <span>in <strong>@selectedCat</strong></span> }
+            </p>
+            <a asp-action="Index" class="btn btn-outline-warning rounded-pill px-4">
+                <i class="bi bi-arrow-left me-1"></i>Clear Filters
+            </a>
+        </div>
+    }
+    else
+    {
+        <!-- ── Accordion grouped by category ── -->
+        @foreach (var group in grouped)
+        {
+            var groupIcon = catIcons.TryGetValue(group.Key, out var gi) ? gi : "bi-question-circle";
+            <div class="faq-group mb-4">
+                <div class="faq-group-header">
+                    <i class="bi @groupIcon me-2"></i>@group.Key
+                    <span class="faq-group-count ms-2">@group.Count() question@(group.Count()!=1?"s":"")</span>
+                </div>
+                <div class="accordion faq-accordion" id="acc-@group.Key.Replace(" ","").Replace("&","")">
+                    @foreach (var faq in group)
+                    {
+                        itemIndex++;
+                        var accId    = "faq-" + itemIndex;
+                        var parentId = "acc-" + group.Key.Replace(" ","").Replace("&","");
+                        <div class="accordion-item faq-item" data-question="@faq.Question.ToLower()" data-category="@faq.Category">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button faq-btn collapsed" type="button"
+                                        data-bs-toggle="collapse" data-bs-target="#@accId"
+                                        aria-expanded="false" aria-controls="@accId">
+                                    @if (faq.IsPopular)
+                                    {
+                                        <span class="faq-popular-badge me-2">Popular</span>
+                                    }
+                                    @faq.Question
+                                </button>
+                            </h2>
+                            <div id="@accId" class="accordion-collapse collapse"
+                                 data-bs-parent="#@parentId">
+                                <div class="accordion-body faq-body">
+                                    <i class="bi bi-chat-text-fill faq-answer-icon me-2"></i>
+                                    @faq.Answer
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    }
+
+    <!-- ── Still have questions? ── -->
+    <div class="faq-contact-cta">
+        <div class="row align-items-center g-4">
+            <div class="col-md-8">
+                <h5 class="fw-bold mb-1"><i class="bi bi-chat-dots-fill text-warning me-2"></i>Still have a question?</h5>
+                <p class="text-muted mb-0 small">
+                    Our support team is available 24/7. Reach us by phone, email, or WhatsApp and we'll get back to you in minutes.
+                </p>
+            </div>
+            <div class="col-md-4 text-md-end d-flex gap-2 justify-content-md-end flex-wrap">
+                <a href="tel:+919876543210" class="btn btn-dark rounded-pill px-3">
+                    <i class="bi bi-telephone-fill me-1"></i>Call Us
+                </a>
+                <a href="mailto:support@ridefast.in" class="btn btn-warning fw-bold rounded-pill px-3">
+                    <i class="bi bi-envelope-fill me-1"></i>Email Us
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section Scripts {
+<script>
+// Live client-side highlight of matched search term in answers
+(function () {
+    var q = "@Html.Raw(searchQuery.Replace("\"","\\\""))".trim().toLowerCase();
+    if (!q) return;
+    document.querySelectorAll('.faq-body').forEach(function (el) {
+        el.innerHTML = el.innerHTML.replace(
+            new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi'),
+            '<mark class="faq-highlight">$1</mark>'
+        );
+    });
+    // Auto-open accordion items that match
+    document.querySelectorAll('.faq-item').forEach(function (item) {
+        var qText = item.dataset.question || '';
+        var body  = item.querySelector('.faq-body');
+        if (qText.includes(q) || (body && body.textContent.toLowerCase().includes(q))) {
+            var btn = item.querySelector('.faq-btn');
+            var col = item.querySelector('.accordion-collapse');
+            if (btn)  { btn.classList.remove('collapsed'); btn.setAttribute('aria-expanded','true'); }
+            if (col)  { col.classList.add('show'); }
+        }
+    });
+})();
+</script>
+}

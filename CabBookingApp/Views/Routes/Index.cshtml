@@ -1,0 +1,153 @@
+@model List<CabBookingApp.Models.RouteInfo>
+
+@{
+    ViewData["Title"] = "Route Details";
+    var selected = ViewBag.SelectedVehicle as string ?? "All";
+    var vehicleTypes = ViewBag.VehicleTypes as string[] ?? Array.Empty<string>();
+
+    var vehicleIcons = new Dictionary<string, string>
+    {
+        ["All"]              = "bi-grid-3x3-gap-fill",
+        ["Hatchback"]        = "bi-car-front",
+        ["Sedan"]            = "bi-car-front-fill",
+        ["SUV"]              = "bi-truck-front-fill",
+        ["Tempo Traveller"]  = "bi-bus-front-fill",
+    };
+}
+
+<!-- Page Header -->
+<div class="page-header">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-2">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="breadcrumb-item active">Route Details</li>
+            </ol>
+        </nav>
+        <div class="d-flex align-items-center gap-3 flex-wrap">
+            <div>
+                <h1 class="mb-1"><i class="bi bi-signpost-split me-2"></i>Routes from Patna</h1>
+                <p class="text-white-50 mb-0 small">
+                    <i class="bi bi-geo-alt-fill me-1 text-warning"></i>
+                    Origin: <strong class="text-white">Patna, Bihar</strong>
+                    &nbsp;&mdash;&nbsp; Select your route and vehicle to book instantly.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+
+    <!-- Vehicle Filter Tabs -->
+    <div class="vehicle-filter-wrap mb-4">
+        <p class="filter-label mb-2"><i class="bi bi-funnel me-1"></i>Filter by Vehicle Type</p>
+        <div class="d-flex gap-2 flex-wrap">
+            @foreach (var v in vehicleTypes)
+            {
+                var isActive = v == selected;
+                var icon = vehicleIcons.TryGetValue(v, out var ic) ? ic : "bi-car-front";
+                <a asp-action="Index" asp-route-vehicle="@(v == "All" ? null : v)"
+                   class="vehicle-tab-btn @(isActive ? "active" : "")">
+                    <i class="bi @icon me-1"></i>@v
+                </a>
+            }
+        </div>
+    </div>
+
+    <!-- Route Cards Grid -->
+    <div class="row g-4">
+        @foreach (var route in Model)
+        {
+            var displayVehicles = selected == "All"
+                ? route.Vehicles
+                : route.Vehicles.Where(v => v.Type == selected).ToList();
+
+            if (!displayVehicles.Any()) continue;
+
+            <div class="col-lg-6">
+                <div class="route-card">
+
+                    <!-- Route Header -->
+                    <div class="route-card-header">
+                        <div class="route-flow">
+                            <div class="route-origin">
+                                <i class="bi bi-geo-alt text-warning"></i>
+                                <span>Patna</span>
+                            </div>
+                            <div class="route-arrow">
+                                <span class="route-line"></span>
+                                <i class="bi bi-arrow-right-circle-fill text-warning"></i>
+                                <span class="route-line"></span>
+                            </div>
+                            <div class="route-dest">
+                                <i class="bi bi-geo-fill text-danger"></i>
+                                <span>@route.Destination</span>
+                            </div>
+                        </div>
+                        <div class="route-meta mt-2">
+                            <span class="route-badge state">
+                                <i class="bi bi-map me-1"></i>@route.State
+                            </span>
+                            <span class="route-badge dist">
+                                <i class="bi bi-rulers me-1"></i>~@route.DistanceKm km
+                            </span>
+                            <span class="route-badge time">
+                                <i class="bi bi-clock me-1"></i>@route.EstimatedTime
+                            </span>
+                        </div>
+                        @if (!string.IsNullOrEmpty(route.PopularFor))
+                        {
+                            <p class="route-popular">
+                                <i class="bi bi-stars me-1 text-warning"></i>
+                                <span>@route.PopularFor</span>
+                            </p>
+                        }
+                    </div>
+
+                    <!-- Vehicle Options -->
+                    <div class="vehicle-options">
+                        @foreach (var v in displayVehicles)
+                        {
+                            <div class="vehicle-row">
+                                <div class="vehicle-info">
+                                    <div class="vehicle-icon-wrap">
+                                        <i class="bi @v.Icon"></i>
+                                    </div>
+                                    <div>
+                                        <div class="vehicle-type">@v.Type</div>
+                                        <div class="vehicle-desc">
+                                            <i class="bi bi-people me-1"></i>@v.Capacity seats &middot; @v.Description
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="vehicle-price-block">
+                                    <div class="vehicle-price">
+                                        &#8377;@v.MinPrice.ToString("N0") – &#8377;@v.MaxPrice.ToString("N0")
+                                    </div>
+                                    <div class="vehicle-price-note">per trip</div>
+                                </div>
+                                <a asp-controller="Bookings"
+                                   asp-action="Create"
+                                   asp-route-source="Patna"
+                                   asp-route-destination="@route.Destination"
+                                   asp-route-amount="@v.MinPrice"
+                                   class="btn-book-route">
+                                    <i class="bi bi-taxi-front me-1"></i>Book
+                                </a>
+                            </div>
+                        }
+                    </div>
+
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Info Note -->
+    <div class="route-info-note mt-5">
+        <i class="bi bi-info-circle-fill text-warning me-2"></i>
+        <span>Prices are indicative and may vary based on travel date, toll charges, and fuel rates. Final amount will be confirmed at booking.</span>
+    </div>
+
+</div>

@@ -1,0 +1,97 @@
+@model CabBookingApp.Models.LoginViewModel
+
+@{
+    ViewData["Title"] = "Sign In";
+    var returnUrl = ViewBag.ReturnUrl as string ?? "";
+}
+
+<div class="auth-page">
+    <div class="auth-card">
+
+        <!-- Logo -->
+        <div class="auth-logo">
+            <span>&#128661;</span>
+            <span class="auth-brand">RideFast</span>
+        </div>
+
+        <h2 class="auth-title">Welcome back!</h2>
+        <p class="auth-sub">Sign in with your email or mobile number</p>
+
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger d-flex align-items-center gap-2 rounded-3 mb-3 py-2" role="alert">
+            <i class="bi bi-exclamation-circle-fill flex-shrink-0"></i>
+            <div></div>
+        </div>
+
+        <form asp-action="Login" asp-route-returnUrl="@returnUrl" method="post" novalidate>
+            @Html.AntiForgeryToken()
+
+            <div class="mb-3">
+                <label asp-for="EmailOrMobile" class="form-label">
+                    <i class="bi bi-person me-1 text-warning"></i>Email / Mobile Number
+                </label>
+                <input asp-for="EmailOrMobile" class="form-control form-control-lg"
+                       placeholder="Enter email or 10-digit mobile"
+                       autocomplete="username" autofocus />
+                <span asp-validation-for="EmailOrMobile" class="text-danger small mt-1 d-block"></span>
+            </div>
+
+            <div class="mb-3">
+                <div class="d-flex justify-content-between align-items-center mb-1">
+                    <label asp-for="Password" class="form-label mb-0">
+                        <i class="bi bi-lock me-1 text-warning"></i>Password
+                    </label>
+                </div>
+                <div class="input-group">
+                    <input asp-for="Password" type="password" id="passwordField"
+                           class="form-control form-control-lg"
+                           placeholder="Enter your password"
+                           autocomplete="current-password" />
+                    <button type="button" class="input-group-text bg-white border-start-0 toggle-pw" onclick="togglePw()">
+                        <i class="bi bi-eye" id="pwIcon"></i>
+                    </button>
+                </div>
+                <span asp-validation-for="Password" class="text-danger small mt-1 d-block"></span>
+            </div>
+
+            <div class="mb-4 d-flex align-items-center justify-content-between">
+                <div class="form-check">
+                    <input asp-for="RememberMe" class="form-check-input" />
+                    <label asp-for="RememberMe" class="form-check-label small">Remember me</label>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-warning btn-lg w-100 fw-bold rounded-pill mb-3">
+                <i class="bi bi-box-arrow-in-right me-2"></i>Sign In
+            </button>
+
+            <p class="text-center text-muted small mb-0">
+                Don't have an account?
+                <a asp-controller="Auth" asp-action="Register" class="auth-link fw-bold">Create one free</a>
+            </p>
+        </form>
+
+        <div class="auth-divider my-3"><span>or</span></div>
+
+        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary w-100 rounded-pill">
+            <i class="bi bi-arrow-left me-1"></i>Continue without signing in
+        </a>
+
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        function togglePw() {
+            const f = document.getElementById('passwordField');
+            const i = document.getElementById('pwIcon');
+            if (f.type === 'password') {
+                f.type = 'text';
+                i.className = 'bi bi-eye-slash';
+            } else {
+                f.type = 'password';
+                i.className = 'bi bi-eye';
+            }
+        }
+    </script>
+}

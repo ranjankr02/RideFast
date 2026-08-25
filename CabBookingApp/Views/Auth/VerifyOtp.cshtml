@@ -1,0 +1,185 @@
+@model CabBookingApp.Models.VerifyOtpViewModel
+
+@{
+    ViewData["Title"] = "Verify OTP";
+    var devOtp = TempData["DevOtp"] as string;
+    var info   = TempData["Info"]   as string;
+}
+
+<div class="auth-page">
+    <div class="auth-card otp-card">
+
+        <!-- Icon -->
+        <div class="auth-logo mb-2">
+            <span style="font-size:2.4rem">🔐</span>
+        </div>
+
+        <h4 class="fw-bold text-center mb-1">OTP Verification</h4>
+        <p class="text-center text-muted small mb-4">
+            @if (Model.Purpose == "Registration")
+            {
+                <span>We sent a 6-digit code to verify your account.</span>
+            }
+            else
+            {
+                <span>Enter the OTP sent to confirm your login.</span>
+            }
+            @if (!string.IsNullOrEmpty(Model.MaskedTarget))
+            {
+                <br />
+                <strong class="text-dark">@Model.MaskedTarget</strong>
+            }
+        </p>
+
+        <!-- Dev-mode OTP banner -->
+        @if (!string.IsNullOrEmpty(devOtp))
+        {
+            <div class="alert alert-warning border-warning d-flex align-items-center gap-2 py-2 mb-3" role="alert">
+                <i class="bi bi-bug-fill text-warning fs-5"></i>
+                <div>
+                    <strong>[DEV MODE]</strong> Your OTP is: <strong class="fs-5 ms-1">@devOtp</strong>
+                    <div class="small text-muted mt-1">This banner only appears when Provider = "Mock"</div>
+                </div>
+            </div>
+        }
+
+        @if (!string.IsNullOrEmpty(info))
+        {
+            <div class="alert alert-info py-2 small mb-3">
+                <i class="bi bi-info-circle me-1"></i>@info
+            </div>
+        }
+
+        <form asp-action="VerifyOtp" method="post" id="otpForm">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="UserId" />
+            <input type="hidden" asp-for="Purpose" />
+            <input type="hidden" asp-for="RememberMe" />
+            <input type="hidden" asp-for="ReturnUrl" />
+            <input type="hidden" asp-for="Otp" id="otpHidden" />
+
+            <!-- Validation summary -->
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger py-2 small mb-3"></div>
+
+            <!-- 6 individual digit boxes -->
+            <div class="otp-inputs mb-4" id="otpBoxes">
+                <input class="otp-digit" type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" autocomplete="off" />
+                <input class="otp-digit" type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" autocomplete="off" />
+                <input class="otp-digit" type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" autocomplete="off" />
+                <input class="otp-digit" type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" autocomplete="off" />
+                <input class="otp-digit" type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" autocomplete="off" />
+                <input class="otp-digit" type="text" inputmode="numeric" maxlength="1" pattern="[0-9]" autocomplete="off" />
+            </div>
+
+            <!-- Countdown timer -->
+            <p class="text-center small text-muted mb-3">
+                <i class="bi bi-clock me-1"></i>
+                OTP expires in <span id="otpTimer" class="fw-bold text-danger">10:00</span>
+            </p>
+
+            <button type="submit" class="btn btn-warning fw-bold w-100 rounded-pill py-2" id="verifyBtn">
+                <i class="bi bi-shield-check me-1"></i>Verify OTP
+            </button>
+        </form>
+
+        <!-- Resend -->
+        <div class="text-center mt-3">
+            <form asp-action="ResendOtp" method="post" class="d-inline">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="userId"    value="@Model.UserId" />
+                <input type="hidden" name="purpose"   value="@Model.Purpose" />
+                <input type="hidden" name="rememberMe" value="@Model.RememberMe" />
+                <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
+                <small class="text-muted">Didn't receive the code? </small>
+                <button type="submit" class="btn btn-link btn-sm p-0 text-warning fw-semibold">
+                    Resend OTP
+                </button>
+            </form>
+        </div>
+
+        <div class="text-center mt-2">
+            <a asp-action="Login" class="text-muted small">
+                <i class="bi bi-arrow-left me-1"></i>Back to Login
+            </a>
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+<script>
+(function () {
+    var boxes  = Array.from(document.querySelectorAll('.otp-digit'));
+    var hidden = document.getElementById('otpHidden');
+    var form   = document.getElementById('otpForm');
+
+    // Focus first box on load
+    boxes[0]?.focus();
+
+    boxes.forEach(function (box, i) {
+        box.addEventListener('input', function () {
+            // Allow only digits
+            box.value = box.value.replace(/\D/, '');
+            if (box.value) boxes[i + 1]?.focus();
+            syncHidden();
+        });
+
+        box.addEventListener('keydown', function (e) {
+            if (e.key === 'Backspace' && !box.value && i > 0) {
+                boxes[i - 1].value = '';
+                boxes[i - 1].focus();
+                syncHidden();
+            }
+            if (e.key === 'ArrowLeft'  && i > 0)           boxes[i - 1].focus();
+            if (e.key === 'ArrowRight' && i < boxes.length - 1) boxes[i + 1].focus();
+        });
+
+        // Handle paste on any digit box
+        box.addEventListener('paste', function (e) {
+            e.preventDefault();
+            var text = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
+            text.split('').slice(0, 6).forEach(function (ch, j) {
+                if (boxes[j]) boxes[j].value = ch;
+            });
+            boxes[Math.min(text.length, 5)].focus();
+            syncHidden();
+        });
+    });
+
+    function syncHidden() {
+        hidden.value = boxes.map(function (b) { return b.value; }).join('');
+    }
+
+    // Validate all boxes filled before submit
+    form.addEventListener('submit', function (e) {
+        syncHidden();
+        if (hidden.value.length !== 6) {
+            e.preventDefault();
+            boxes[0].focus();
+            // Highlight empty boxes
+            boxes.forEach(function (b) {
+                b.classList.toggle('otp-digit-error', !b.value);
+            });
+        }
+    });
+
+    // Countdown timer (10:00)
+    var timerEl = document.getElementById('otpTimer');
+    var seconds = 10 * 60;
+    var interval = setInterval(function () {
+        seconds--;
+        if (seconds <= 0) {
+            clearInterval(interval);
+            timerEl.textContent = 'Expired';
+            timerEl.classList.add('text-danger');
+            document.getElementById('verifyBtn').disabled = true;
+            return;
+        }
+        var m = Math.floor(seconds / 60);
+        var s = seconds % 60;
+        timerEl.textContent = m + ':' + (s < 10 ? '0' : '') + s;
+        if (seconds <= 60) timerEl.classList.add('text-danger');
+    }, 1000);
+})();
+</script>
+}

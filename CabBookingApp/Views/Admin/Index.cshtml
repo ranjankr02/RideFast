@@ -1,0 +1,166 @@
+@model CabBookingApp.Models.AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<div class="page-header">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-2">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="breadcrumb-item active">Admin</li>
+            </ol>
+        </nav>
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2">
+            <div>
+                <h1 class="mb-1"><i class="bi bi-shield-lock me-2"></i>Admin Dashboard</h1>
+                <p class="text-white-50 small mb-0">Overview of all activity on RideFast.</p>
+            </div>
+            <div class="d-flex gap-2 flex-wrap">
+                <a asp-action="Users" class="btn btn-outline-light rounded-pill px-3">
+                    <i class="bi bi-people me-1"></i>Manage Users
+                </a>
+                <a asp-action="Bookings" class="btn btn-warning fw-bold rounded-pill px-3">
+                    <i class="bi bi-journal-bookmark me-1"></i>All Bookings
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show d-flex align-items-center gap-2 rounded-3 mb-4">
+            <i class="bi bi-check-circle-fill fs-5"></i><div>@TempData["Success"]</div>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    <!-- Stats Row -->
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100 text-center p-3">
+                <div class="rounded-circle bg-warning bg-opacity-10 d-inline-flex align-items-center justify-content-center mx-auto mb-2" style="width:52px;height:52px">
+                    <i class="bi bi-journal-bookmark fs-4 text-warning"></i>
+                </div>
+                <div class="fs-2 fw-bold text-dark">@Model.TotalBookings</div>
+                <div class="text-muted small">Total Bookings</div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100 text-center p-3">
+                <div class="rounded-circle bg-primary bg-opacity-10 d-inline-flex align-items-center justify-content-center mx-auto mb-2" style="width:52px;height:52px">
+                    <i class="bi bi-people fs-4 text-primary"></i>
+                </div>
+                <div class="fs-2 fw-bold text-dark">@Model.TotalUsers</div>
+                <div class="text-muted small">Registered Users</div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100 text-center p-3">
+                <div class="rounded-circle bg-success bg-opacity-10 d-inline-flex align-items-center justify-content-center mx-auto mb-2" style="width:52px;height:52px">
+                    <i class="bi bi-currency-rupee fs-4 text-success"></i>
+                </div>
+                <div class="fs-2 fw-bold text-dark">₹@Model.TotalRevenue.ToString("N0")</div>
+                <div class="text-muted small">Total Revenue</div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100 text-center p-3">
+                <div class="rounded-circle bg-info bg-opacity-10 d-inline-flex align-items-center justify-content-center mx-auto mb-2" style="width:52px;height:52px">
+                    <i class="bi bi-calendar-check fs-4 text-info"></i>
+                </div>
+                <div class="fs-2 fw-bold text-dark">@Model.TodayBookings</div>
+                <div class="text-muted small">Today's Bookings</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+
+        <!-- Recent Bookings -->
+        <div class="col-lg-7">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 d-flex align-items-center justify-content-between py-3">
+                    <h6 class="mb-0 fw-bold"><i class="bi bi-clock-history me-2 text-warning"></i>Recent Bookings</h6>
+                    <a asp-action="Bookings" class="btn btn-sm btn-outline-secondary rounded-pill">View All</a>
+                </div>
+                <div class="card-body p-0">
+                    @if (!Model.RecentBookings.Any())
+                    {
+                        <p class="text-muted text-center py-4">No bookings yet.</p>
+                    }
+                    else
+                    {
+                        <div class="table-responsive">
+                            <table class="table mb-0 small">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Customer</th>
+                                        <th>Route</th>
+                                        <th>Amount</th>
+                                        <th>Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var b in Model.RecentBookings)
+                                    {
+                                        <tr>
+                                            <td class="text-muted">#@b.Id</td>
+                                            <td class="fw-semibold">@b.CustomerName</td>
+                                            <td>@b.Source → @b.Destination</td>
+                                            <td><span class="text-success fw-semibold">₹@b.BookingAmount.ToString("N0")</span></td>
+                                            <td class="text-muted">@b.CreatedAt.ToString("dd MMM")</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Users -->
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm">
+                <div class="card-header bg-white border-0 d-flex align-items-center justify-content-between py-3">
+                    <h6 class="mb-0 fw-bold"><i class="bi bi-person-plus me-2 text-primary"></i>New Users</h6>
+                    <a asp-action="Users" class="btn btn-sm btn-outline-secondary rounded-pill">View All</a>
+                </div>
+                <div class="card-body p-0">
+                    @if (!Model.RecentUsers.Any())
+                    {
+                        <p class="text-muted text-center py-4">No users yet.</p>
+                    }
+                    else
+                    {
+                        <ul class="list-group list-group-flush">
+                            @foreach (var u in Model.RecentUsers)
+                            {
+                                <li class="list-group-item d-flex align-items-center gap-3 py-3">
+                                    <div class="rounded-circle bg-warning text-dark d-flex align-items-center justify-content-center fw-bold"
+                                         style="width:38px;height:38px;font-size:.95rem;flex-shrink:0">
+                                        @u.Name[0].ToString().ToUpper()
+                                    </div>
+                                    <div class="flex-grow-1 min-width-0">
+                                        <div class="fw-semibold text-truncate">@u.Name</div>
+                                        <div class="text-muted small text-truncate">@u.Email</div>
+                                    </div>
+                                    <span class="badge @(u.Role == "Admin" ? "bg-danger" : "bg-secondary") rounded-pill">
+                                        @u.Role
+                                    </span>
+                                </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

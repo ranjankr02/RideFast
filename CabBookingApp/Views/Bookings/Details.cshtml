@@ -1,0 +1,90 @@
+@model CabBookingApp.Models.Booking
+
+@{
+    ViewData["Title"] = "Booking Details";
+}
+
+<div class="page-header">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-2">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="breadcrumb-item"><a asp-controller="Bookings" asp-action="Index">Bookings</a></li>
+                <li class="breadcrumb-item active">Details #@Model.Id</li>
+            </ol>
+        </nav>
+        <h1><i class="bi bi-file-earmark-text me-2"></i>Booking Details <span class="text-muted fs-5 fw-normal">#@Model.Id</span></h1>
+    </div>
+</div>
+
+<div class="container pb-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-7 col-md-9">
+
+            <div class="detail-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <span><i class="bi bi-person-circle me-2"></i>@Model.CustomerName</span>
+                    <span class="badge bg-warning text-dark fw-bold fs-6">&#8377; @Model.BookingAmount.ToString("N2")</span>
+                </div>
+                <div class="card-body">
+                    <dl class="row detail-table">
+                        <dt class="col-sm-5">Customer Name</dt>
+                        <dd class="col-sm-7">@Model.CustomerName</dd>
+
+                        <dt class="col-sm-5">Mobile Number</dt>
+                        <dd class="col-sm-7">
+                            <i class="bi bi-phone me-1 text-muted"></i>+91 @Model.CustomerMobileNumber
+                        </dd>
+
+                        <dt class="col-sm-5">Vehicle Type</dt>
+                        <dd class="col-sm-7">
+                            <span class="badge bg-dark text-warning px-2 py-1">
+                                <i class="bi bi-car-front me-1"></i>@Model.VehicleType
+                            </span>
+                        </dd>
+
+                        <dt class="col-sm-5">Pickup Location</dt>
+                        <dd class="col-sm-7">
+                            <i class="bi bi-geo me-1 text-success"></i>@Model.Source
+                        </dd>
+
+                        <dt class="col-sm-5">Drop Location</dt>
+                        <dd class="col-sm-7">
+                            <i class="bi bi-geo-fill me-1 text-danger"></i>@Model.Destination
+                        </dd>
+
+                        <dt class="col-sm-5">Travel Date &amp; Time</dt>
+                        <dd class="col-sm-7">
+                            <i class="bi bi-calendar-event me-1 text-primary"></i>
+                            @Model.TravelDateTime.ToString("dd MMM yyyy") &nbsp;
+                            <span class="badge bg-light text-dark border">@Model.TravelDateTime.ToString("hh:mm tt")</span>
+                        </dd>
+
+                        <dt class="col-sm-5">Booking Amount</dt>
+                        <dd class="col-sm-7">
+                            <span class="amount-badge fs-6">&#8377; @Model.BookingAmount.ToString("N2")</span>
+                        </dd>
+
+                        <dt class="col-sm-5">Booked On</dt>
+                        <dd class="col-sm-7 text-muted">
+                            <i class="bi bi-clock me-1"></i>@Model.CreatedAt.ToString("dd MMM yyyy, hh:mm tt")
+                        </dd>
+                    </dl>
+                </div>
+            </div>
+
+            <div class="btn-action-row">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-warning fw-bold px-4 rounded-pill">
+                    <i class="bi bi-pencil me-1"></i>Edit
+                </a>
+                <a asp-action="Index" class="btn btn-outline-secondary px-4 rounded-pill">
+                    <i class="bi bi-arrow-left me-1"></i>Back to List
+                </a>
+                <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger px-4 rounded-pill ms-auto">
+                    <i class="bi bi-trash me-1"></i>Delete
+                </a>
+            </div>
+
+        </div>
+    </div>
+</div>

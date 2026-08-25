@@ -1,0 +1,112 @@
+@model IEnumerable<CabBookingApp.Models.Booking>
+
+@{
+    ViewData["Title"] = "My Bookings";
+    var isAdmin = (bool)(ViewBag.IsAdmin ?? false);
+}
+
+<div class="page-header">
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-2">
+                <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Home</a></li>
+                <li class="breadcrumb-item active">My Bookings</li>
+            </ol>
+        </nav>
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+            <div>
+                <h1 class="mb-1"><i class="bi bi-journal-bookmark me-2"></i>My Bookings</h1>
+                @if (isAdmin)
+                {
+                    <p class="text-white-50 small mb-0">Viewing your bookings. <a asp-controller="Admin" asp-action="Bookings" class="text-warning">View all bookings →</a></p>
+                }
+                else
+                {
+                    <p class="text-white-50 small mb-0">All your ride bookings in one place.</p>
+                }
+            </div>
+            <a asp-action="Create" class="btn btn-warning fw-bold px-4 rounded-pill">
+                <i class="bi bi-plus-lg me-1"></i>New Booking
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="container pb-5">
+
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show d-flex align-items-center gap-2 rounded-3 mb-4" role="alert">
+            <i class="bi bi-check-circle-fill fs-5"></i>
+            <div>@TempData["Success"]</div>
+            <button type="button" class="btn-close ms-auto" data-bs-dismiss="alert"></button>
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="text-center py-5">
+            <i class="bi bi-journal-x text-muted" style="font-size:4rem"></i>
+            <h4 class="mt-3 text-muted">No bookings yet</h4>
+            <p class="text-muted">Book your first ride and it will appear here.</p>
+            <a asp-action="Create" class="btn btn-warning fw-bold px-4 rounded-pill mt-1">
+                <i class="bi bi-taxi-front me-1"></i>Book a Ride
+            </a>
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive rounded-3 shadow-sm">
+            <table class="table bookings-table mb-0">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th><i class="bi bi-person me-1"></i>Customer</th>
+                        <th><i class="bi bi-phone me-1"></i>Mobile</th>
+                        <th><i class="bi bi-car-front me-1"></i>Vehicle</th>
+                        <th><i class="bi bi-geo me-1"></i>From</th>
+                        <th><i class="bi bi-geo-fill me-1"></i>To</th>
+                        <th><i class="bi bi-calendar-event me-1"></i>Travel Date &amp; Time</th>
+                        <th><i class="bi bi-currency-rupee me-1"></i>Amount</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var b in Model)
+                    {
+                        <tr>
+                            <td class="text-muted fw-semibold">#@b.Id</td>
+                            <td class="fw-semibold">@b.CustomerName</td>
+                            <td>@b.CustomerMobileNumber</td>
+                            <td><span class="badge bg-dark text-warning">@b.VehicleType</span></td>
+                            <td>@b.Source</td>
+                            <td>@b.Destination</td>
+                            <td>@b.TravelDateTime.ToString("dd MMM yyyy, hh:mm tt")</td>
+                            <td><span class="amount-badge">&#8377; @b.BookingAmount.ToString("N2")</span></td>
+                            <td>
+                                <div class="d-flex gap-1 flex-wrap">
+                                    <a asp-action="Details" asp-route-id="@b.Id"
+                                       class="btn btn-sm btn-outline-secondary rounded-pill" title="Details">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@b.Id"
+                                       class="btn btn-sm btn-outline-warning rounded-pill" title="Edit">
+                                        <i class="bi bi-pencil"></i>
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@b.Id"
+                                       class="btn btn-sm btn-outline-danger rounded-pill" title="Delete">
+                                        <i class="bi bi-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <p class="text-muted small mt-2">
+            <i class="bi bi-info-circle me-1"></i>@Model.Count() booking(s) found.
+        </p>
+    }
+
+</div>
