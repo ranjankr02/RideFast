@@ -50,7 +50,7 @@ using (var scope = app.Services.CreateScope())
             Name         = "Admin",
             Email        = "admin@ridefast.in",
             MobileNumber = "9000000000",
-            PasswordHash = PasswordHelper.CreateHash("Admin@123"),
+            PasswordHash = PasswordHelper.CreateHash(""),
             Role         = "Admin",
             CreatedAt    = DateTime.Now,
         });
