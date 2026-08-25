@@ -27,7 +27,7 @@ public class NotificationService : INotificationService
         string.IsNullOrWhiteSpace(_settings.Provider) ||
         _settings.Provider.Equals("Mock", StringComparison.OrdinalIgnoreCase);
 
-    // ── OTP ──────────────────────────────────────────────────────────────────
+    // ── OTP ──────────────────────────────────────────────────────────────────--------------
 
     public async Task<bool> SendOtpAsync(AppUser user, string otp, string purpose)
     {
