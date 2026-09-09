@@ -1,3 +1,4 @@
+@using CabBookingApp.Data
 @model CabBookingApp.Models.Booking
 
 @{
@@ -58,12 +59,18 @@
                     <div class="row g-3 mb-3">
                         <div class="col-sm-6">
                             <label asp-for="Source" class="form-label"><i class="bi bi-geo me-1 text-success"></i>Pickup Location</label>
-                            <input asp-for="Source" class="form-control" />
+                            <select asp-for="Source" class="form-select"
+                                    asp-items="IndianCities.SelectItems(Model?.Source)">
+                                <option value="">Select pickup city</option>
+                            </select>
                             <span asp-validation-for="Source" class="text-danger small mt-1 d-block"></span>
                         </div>
                         <div class="col-sm-6">
                             <label asp-for="Destination" class="form-label"><i class="bi bi-geo-fill me-1 text-danger"></i>Drop Location</label>
-                            <input asp-for="Destination" class="form-control" />
+                            <select asp-for="Destination" class="form-select"
+                                    asp-items="IndianCities.SelectItems(Model?.Destination)">
+                                <option value="">Select drop city</option>
+                            </select>
                             <span asp-validation-for="Destination" class="text-danger small mt-1 d-block"></span>
                         </div>
                     </div>
