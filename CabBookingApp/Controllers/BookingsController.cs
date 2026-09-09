@@ -59,8 +59,8 @@ public class BookingsController : Controller
     {
         var booking = new Booking
         {
-            Source        = source ?? string.Empty,
-            Destination   = destination ?? string.Empty,
+            Source        = IndianCities.Canonical(source),
+            Destination   = IndianCities.Canonical(destination),
             BookingAmount = amount ?? 0,
             VehicleType   = vehicleType ?? string.Empty,
         };
@@ -85,6 +85,8 @@ public class BookingsController : Controller
         [Bind("CustomerName,CustomerMobileNumber,Source,Destination,VehicleType,TravelDateTime,BookingAmount")]
         Booking booking)
     {
+        ValidateCities(booking);
+
         if (ModelState.IsValid)
         {
             booking.CreatedAt = DateTime.Now;
@@ -140,6 +142,8 @@ public class BookingsController : Controller
         booking.CreatedAt = existing.CreatedAt;
         booking.UserId    = existing.UserId;
 
+        ValidateCities(booking);
+
         if (ModelState.IsValid)
         {
             existing.CustomerName         = booking.CustomerName;
@@ -194,6 +198,24 @@ public class BookingsController : Controller
     }
 
     // ── Helpers ───────────────────────────────────────────────────────────────
+
+    // The pickup/drop selects are populated from IndianCities, so anything else was
+    // hand-crafted; canonicalise the casing and reject unknown or identical cities.
+    private void ValidateCities(Booking booking)
+    {
+        booking.Source      = IndianCities.Canonical(booking.Source);
+        booking.Destination = IndianCities.Canonical(booking.Destination);
+
+        if (!IndianCities.IsKnown(booking.Source))
+            ModelState.AddModelError(nameof(Booking.Source), "Please select a pickup city from the list.");
+
+        if (!IndianCities.IsKnown(booking.Destination))
+            ModelState.AddModelError(nameof(Booking.Destination), "Please select a drop city from the list.");
+
+        if (IndianCities.IsKnown(booking.Source) &&
+            string.Equals(booking.Source, booking.Destination, StringComparison.OrdinalIgnoreCase))
+            ModelState.AddModelError(nameof(Booking.Destination), "Drop city must be different from the pickup city.");
+    }
 
     private int? CurrentUserId()
     {

@@ -1,3 +1,4 @@
+@using CabBookingApp.Data
 @{
     ViewData["Title"] = "Home";
     Layout = "_Layout";
@@ -235,7 +236,17 @@
                             <div class="col-6">
                                 <label class="bw-label"><i class="bi bi-geo-alt text-success me-1"></i>From</label>
                                 <div class="bw-input-wrap">
-                                    <input type="text" id="qb-from" class="bw-input" value="Patna" placeholder="Pickup city" />
+                                    <select id="qb-from" class="bw-input" onchange="refreshPrice()">
+                                        @foreach (var (state, cities) in IndianCities.ByState)
+                                        {
+                                            <optgroup label="@state">
+                                                @foreach (var city in cities)
+                                                {
+                                                    <option value="@city" selected="@(city == "Patna")">@city</option>
+                                                }
+                                            </optgroup>
+                                        }
+                                    </select>
                                 </div>
                             </div>
                             <div class="col-6">
@@ -243,13 +254,15 @@
                                 <div class="bw-input-wrap">
                                     <select id="qb-to" class="bw-input" onchange="refreshPrice()">
                                         <option value="">Select destination</option>
-                                        <option value="Gorakhpur">Gorakhpur, UP</option>
-                                        <option value="Varanasi">Varanasi, UP</option>
-                                        <option value="Prayagraj">Prayagraj, UP</option>
-                                        <option value="Lucknow">Lucknow, UP</option>
-                                        <option value="Kanpur">Kanpur, UP</option>
-                                        <option value="Agra">Agra, UP</option>
-                                        <option value="Delhi">Delhi NCR</option>
+                                        @foreach (var (state, cities) in IndianCities.ByState)
+                                        {
+                                            <optgroup label="@state">
+                                                @foreach (var city in cities)
+                                                {
+                                                    <option value="@city">@city</option>
+                                                }
+                                            </optgroup>
+                                        }
                                     </select>
                                 </div>
                             </div>
