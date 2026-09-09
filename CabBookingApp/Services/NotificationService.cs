@@ -12,15 +12,18 @@ public class NotificationService : INotificationService
     private readonly NotificationSettings _settings;
     private readonly ILogger<NotificationService> _logger;
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly IHostEnvironment _env;
 
     public NotificationService(
         IOptions<NotificationSettings> settings,
         ILogger<NotificationService> logger,
-        IHttpClientFactory httpClientFactory)
+        IHttpClientFactory httpClientFactory,
+        IHostEnvironment env)
     {
         _settings = settings.Value;
         _logger = logger;
         _httpClientFactory = httpClientFactory;
+        _env = env;
     }
 
     public bool IsMock =>
@@ -33,9 +36,14 @@ public class NotificationService : INotificationService
     {
         if (IsMock)
         {
-            _logger.LogWarning(
-                "[DEV OTP] Purpose={Purpose} | User={Name} | Email={Email} | Mobile={Mobile} | OTP={Otp}",
-                purpose, user.Name, user.Email, user.MobileNumber, otp);
+            if (_env.IsDevelopment())
+                _logger.LogWarning(
+                    "[DEV OTP] Purpose={Purpose} | User={Name} | Email={Email} | Mobile={Mobile} | OTP={Otp}",
+                    purpose, user.Name, user.Email, user.MobileNumber, otp);
+            else
+                _logger.LogWarning(
+                    "Notification provider is 'Mock' outside development — no OTP was delivered for user {UserId}.",
+                    user.Id);
             return true;
         }
 

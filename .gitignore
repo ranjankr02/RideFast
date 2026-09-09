@@ -361,3 +361,11 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Local SQLite database (contains user data; recreated by EF migrations on startup)
+*.db
+*.db-shm
+*.db-wal
+
+# Editor/agent local settings
+.claude/

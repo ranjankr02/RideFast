@@ -53,6 +53,7 @@ public class BookingsController : Controller
 
     // ── Create ────────────────────────────────────────────────────────────────
 
+    [Authorize]
     public IActionResult Create(string? source = null, string? destination = null,
         decimal? amount = null, string? vehicleType = null, string? travelDateTime = null)
     {
@@ -79,6 +80,7 @@ public class BookingsController : Controller
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize]
     public async Task<IActionResult> Create(
         [Bind("CustomerName,CustomerMobileNumber,Source,Destination,VehicleType,TravelDateTime,BookingAmount")]
         Booking booking)
@@ -99,9 +101,11 @@ public class BookingsController : Controller
             user ??= await _context.Users.FirstOrDefaultAsync(u =>
                 u.MobileNumber == booking.CustomerMobileNumber);
 
-            await _notify.SendBookingConfirmationAsync(booking, user);
+            var delivered = await _notify.SendBookingConfirmationAsync(booking, user);
 
-            TempData["Success"] = "Booking confirmed! A confirmation has been sent to your contact.";
+            TempData["Success"] = delivered
+                ? "Booking confirmed! A confirmation has been sent to your contact."
+                : "Booking confirmed! We could not send the confirmation message — please note your booking id.";
             return RedirectToAction(nameof(Index));
         }
         return View(booking);
@@ -123,17 +127,31 @@ public class BookingsController : Controller
     [ValidateAntiForgeryToken]
     [Authorize]
     public async Task<IActionResult> Edit(int id,
-        [Bind("Id,CustomerName,CustomerMobileNumber,Source,Destination,VehicleType,TravelDateTime,BookingAmount,CreatedAt,UserId")]
+        [Bind("Id,CustomerName,CustomerMobileNumber,Source,Destination,VehicleType,TravelDateTime,BookingAmount")]
         Booking booking)
     {
         if (id != booking.Id) return NotFound();
-        if (!CanAccess(booking)) return Forbid();
+
+        // Authorise against the stored booking, not the values posted by the caller.
+        var existing = await _context.Bookings.FindAsync(id);
+        if (existing == null) return NotFound();
+        if (!CanAccess(existing)) return Forbid();
+
+        booking.CreatedAt = existing.CreatedAt;
+        booking.UserId    = existing.UserId;
 
         if (ModelState.IsValid)
         {
+            existing.CustomerName         = booking.CustomerName;
+            existing.CustomerMobileNumber = booking.CustomerMobileNumber;
+            existing.Source               = booking.Source;
+            existing.Destination          = booking.Destination;
+            existing.VehicleType          = booking.VehicleType;
+            existing.TravelDateTime       = booking.TravelDateTime;
+            existing.BookingAmount        = booking.BookingAmount;
+
             try
             {
-                _context.Update(booking);
                 await _context.SaveChangesAsync();
                 TempData["Success"] = "Booking updated successfully.";
             }
