@@ -52,10 +52,6 @@
 
         <form asp-action="VerifyOtp" method="post" id="otpForm">
             @Html.AntiForgeryToken()
-            <input type="hidden" asp-for="UserId" />
-            <input type="hidden" asp-for="Purpose" />
-            <input type="hidden" asp-for="RememberMe" />
-            <input type="hidden" asp-for="ReturnUrl" />
             <input type="hidden" asp-for="Otp" id="otpHidden" />
 
             <!-- Validation summary -->
@@ -86,10 +82,6 @@
         <div class="text-center mt-3">
             <form asp-action="ResendOtp" method="post" class="d-inline">
                 @Html.AntiForgeryToken()
-                <input type="hidden" name="userId"    value="@Model.UserId" />
-                <input type="hidden" name="purpose"   value="@Model.Purpose" />
-                <input type="hidden" name="rememberMe" value="@Model.RememberMe" />
-                <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
                 <small class="text-muted">Didn't receive the code? </small>
                 <button type="submit" class="btn btn-link btn-sm p-0 text-warning fw-semibold">
                     Resend OTP

@@ -14,6 +14,10 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<AppUser>()
+            .Property(u => u.Email)
+            .UseCollation("NOCASE");
+
+        modelBuilder.Entity<AppUser>()
             .HasIndex(u => u.Email)
             .IsUnique();
 

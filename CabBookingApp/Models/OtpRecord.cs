@@ -15,5 +15,6 @@ public class OtpRecord
 
     public DateTime ExpiresAt { get; set; }
     public bool IsUsed { get; set; }
+    public int Attempts { get; set; }
     public DateTime CreatedAt { get; set; }
 }

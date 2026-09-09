@@ -126,7 +126,7 @@
                             <div class="dropdown">
                                 <button class="btn btn-outline-light rounded-pill px-3 dropdown-toggle d-flex align-items-center gap-2"
                                         type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                                    <span class="user-avatar-sm">@User.Identity.Name[0].ToString().ToUpper()</span>
+                                    <span class="user-avatar-sm">@(string.IsNullOrEmpty(User.Identity.Name) ? "?" : User.Identity.Name[0].ToString().ToUpper())</span>
                                     <span class="d-none d-lg-inline text-truncate" style="max-width:110px">@User.Identity.Name</span>
                                 </button>
                                 <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2">
