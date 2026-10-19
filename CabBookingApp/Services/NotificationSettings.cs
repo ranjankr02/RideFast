@@ -3,22 +3,10 @@ namespace CabBookingApp.Services;
 public class NotificationSettings
 {
     public const string Section = "Notifications";
-    public string Provider { get; set; } = "Mock"; // Mock | Email | Sms | Both
-    public EmailSettings Email { get; set; } = new();
-    public SmsSettings Sms { get; set; } = new();
-}
 
-public class EmailSettings
-{
-    public string SmtpHost { get; set; } = "smtp.gmail.com";
-    public int SmtpPort { get; set; } = 587;
-    public string Username { get; set; } = string.Empty;
-    public string Password { get; set; } = string.Empty;
-    public string FromAddress { get; set; } = "noreply@ridefast.in";
-    public string FromName { get; set; } = "RideFast";
-}
+    // Mock     — log only, OTP shown on screen in Development
+    // RabbitMq — publish to the notification microservice
+    public string Provider { get; set; } = "RabbitMq";
 
-public class SmsSettings
-{
-    public string ApiKey { get; set; } = string.Empty; // Fast2SMS API key
+    public bool IsMock => Provider.Equals("Mock", StringComparison.OrdinalIgnoreCase);
 }

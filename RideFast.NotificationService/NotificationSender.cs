@@ -1,49 +1,45 @@
 using System.Net.Http.Json;
-using CabBookingApp.Models;
 using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
+using RideFast.Contracts;
 
-namespace CabBookingApp.Services;
+namespace RideFast.NotificationService;
 
-public class NotificationService : INotificationService
+/// <summary>
+/// Delivers notification messages over email (MailKit/SMTP) and SMS (Fast2SMS).
+/// Returns false when nothing could be delivered so the consumer can dead-letter the message.
+/// </summary>
+public class NotificationSender
 {
     private readonly NotificationSettings _settings;
-    private readonly ILogger<NotificationService> _logger;
+    private readonly ILogger<NotificationSender> _logger;
     private readonly IHttpClientFactory _httpClientFactory;
-    private readonly IHostEnvironment _env;
 
-    public NotificationService(
+    public NotificationSender(
         IOptions<NotificationSettings> settings,
-        ILogger<NotificationService> logger,
-        IHttpClientFactory httpClientFactory,
-        IHostEnvironment env)
+        ILogger<NotificationSender> logger,
+        IHttpClientFactory httpClientFactory)
     {
         _settings = settings.Value;
         _logger = logger;
         _httpClientFactory = httpClientFactory;
-        _env = env;
     }
 
-    public bool IsMock =>
+    private bool IsMock =>
         string.IsNullOrWhiteSpace(_settings.Provider) ||
         _settings.Provider.Equals("Mock", StringComparison.OrdinalIgnoreCase);
 
-    // ── OTP ──────────────────────────────────────────────────────────────────--------------
+    // ── OTP ───────────────────────────────────────────────────────────────────
 
-    public async Task<bool> SendOtpAsync(AppUser user, string otp, string purpose)
+    public async Task<bool> SendOtpAsync(OtpRequested msg)
     {
         if (IsMock)
         {
-            if (_env.IsDevelopment())
-                _logger.LogWarning(
-                    "[DEV OTP] Purpose={Purpose} | User={Name} | Email={Email} | Mobile={Mobile} | OTP={Otp}",
-                    purpose, user.Name, user.Email, user.MobileNumber, otp);
-            else
-                _logger.LogWarning(
-                    "Notification provider is 'Mock' outside development — no OTP was delivered for user {UserId}.",
-                    user.Id);
+            _logger.LogWarning(
+                "[MOCK OTP] Purpose={Purpose} | User={Name} | Email={Email} | Mobile={Mobile} | OTP={Otp}",
+                msg.Purpose, msg.Name, msg.Email, msg.Mobile, msg.Otp);
             return true;
         }
 
@@ -52,47 +48,58 @@ public class NotificationService : INotificationService
 
         if (provider is "email" or "both")
             sent |= await SendEmailAsync(
-                user.Email, user.Name,
-                BuildOtpEmailBody(otp, purpose, user.Name),
-                $"RideFast OTP — {purpose}");
+                msg.Email, msg.Name,
+                BuildOtpEmailBody(msg.Otp, msg.Purpose, msg.Name),
+                $"RideFast OTP — {msg.Purpose}");
 
         if (provider is "sms" or "both")
             sent |= await SendSmsAsync(
-                user.MobileNumber,
-                $"Your RideFast OTP for {purpose} is {otp}. Valid 10 mins. Do not share. -RideFast");
+                msg.Mobile,
+                $"Your RideFast OTP for {msg.Purpose} is {msg.Otp}. Valid 10 mins. Do not share. -RideFast");
 
         return sent;
     }
 
     // ── Booking confirmation ──────────────────────────────────────────────────
 
-    public async Task<bool> SendBookingConfirmationAsync(Booking booking, AppUser? user = null)
+    public async Task<bool> SendBookingConfirmationAsync(BookingConfirmed msg)
     {
         if (IsMock)
         {
             _logger.LogWarning(
-                "[DEV BOOKING] Booking#{Id} | {Name} | {Source}→{Destination} | {Vehicle} | ₹{Amount}",
-                booking.Id, booking.CustomerName, booking.Source,
-                booking.Destination, booking.VehicleType, booking.BookingAmount);
+                "[MOCK BOOKING] Booking#{Id} | {Name} | {Source}→{Destination} | {Vehicle} | ₹{Amount}",
+                msg.BookingId, msg.CustomerName, msg.Source,
+                msg.Destination, msg.VehicleType, msg.Amount);
             return true;
         }
 
         var provider = _settings.Provider.ToLowerInvariant();
-        bool sent = false;
+        bool attempted = false, sent = false;
 
-        if ((provider is "email" or "both") && user != null)
+        if ((provider is "email" or "both") && !string.IsNullOrWhiteSpace(msg.Email))
+        {
+            attempted = true;
             sent |= await SendEmailAsync(
-                user.Email, user.Name,
-                BuildBookingEmailBody(booking),
-                $"Booking Confirmed — #{booking.Id} | RideFast");
+                msg.Email, msg.CustomerName,
+                BuildBookingEmailBody(msg),
+                $"Booking Confirmed — #{msg.BookingId} | RideFast");
+        }
 
         if (provider is "sms" or "both")
         {
-            var msg = $"Booking #{booking.Id} confirmed! " +
-                      $"{booking.Source}→{booking.Destination} on " +
-                      $"{booking.TravelDateTime:dd MMM, h:mmtt}. " +
-                      $"Vehicle: {booking.VehicleType}. Amt: Rs.{booking.BookingAmount:N0}. -RideFast";
-            sent |= await SendSmsAsync(booking.CustomerMobileNumber, msg);
+            attempted = true;
+            var text = $"Booking #{msg.BookingId} confirmed! " +
+                       $"{msg.Source}→{msg.Destination} on " +
+                       $"{msg.TravelDateTime:dd MMM, h:mmtt}. " +
+                       $"Vehicle: {msg.VehicleType}. Amt: Rs.{msg.Amount:N0}. -RideFast";
+            sent |= await SendSmsAsync(msg.Mobile, text);
+        }
+
+        // Guest booking with no email on an email-only setup: nothing to deliver, not a failure.
+        if (!attempted)
+        {
+            _logger.LogInformation("Booking#{Id} has no email address; no confirmation sent", msg.BookingId);
+            return true;
         }
 
         return sent;
@@ -201,7 +208,7 @@ public class NotificationService : INotificationService
         </html>
         """;
 
-    private static string BuildBookingEmailBody(Booking booking) => $"""
+    private static string BuildBookingEmailBody(BookingConfirmed booking) => $"""
         <!DOCTYPE html>
         <html>
         <body style="font-family:Arial,sans-serif;background:#f0f4f8;margin:0;padding:20px">
@@ -216,7 +223,7 @@ public class NotificationService : INotificationService
               <table style="width:100%;border-collapse:collapse;border-radius:8px;overflow:hidden">
                 <tr style="background:#f8fafc">
                   <td style="padding:10px 14px;color:#64748b;font-size:.85rem;width:38%">Booking ID</td>
-                  <td style="padding:10px 14px;font-weight:700;color:#0f172a">#{booking.Id}</td>
+                  <td style="padding:10px 14px;font-weight:700;color:#0f172a">#{booking.BookingId}</td>
                 </tr>
                 <tr>
                   <td style="padding:10px 14px;color:#64748b;font-size:.85rem">From</td>
@@ -236,7 +243,7 @@ public class NotificationService : INotificationService
                 </tr>
                 <tr>
                   <td style="padding:10px 14px;color:#64748b;font-size:.85rem">Amount</td>
-                  <td style="padding:10px 14px;font-weight:700;font-size:1.05rem;color:#16a34a">&#x20B9;{booking.BookingAmount:N0}</td>
+                  <td style="padding:10px 14px;font-weight:700;font-size:1.05rem;color:#16a34a">&#x20B9;{booking.Amount:N0}</td>
                 </tr>
               </table>
               <div style="margin-top:24px;padding:14px;background:#fefce8;border-left:4px solid #fbbf24;border-radius:4px">
