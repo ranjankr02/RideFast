@@ -4,6 +4,7 @@ using CabBookingApp.Models;
 using CabBookingApp.Services;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
+using RideFast.Contracts;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,11 +21,21 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.SlidingExpiration = true;
     });
 
-// Notification service
-builder.Services.Configure<NotificationSettings>(
-    builder.Configuration.GetSection(NotificationSettings.Section));
-builder.Services.AddHttpClient();
-builder.Services.AddScoped<INotificationService, NotificationService>();
+// Notifications are delivered by RideFast.NotificationService; this app only publishes
+// events to RabbitMQ (or logs them in Mock mode).
+var notificationSettings = builder.Configuration
+    .GetSection(NotificationSettings.Section).Get<NotificationSettings>() ?? new NotificationSettings();
+
+if (notificationSettings.IsMock)
+{
+    builder.Services.AddScoped<INotificationService, MockNotificationService>();
+}
+else
+{
+    builder.Services.Configure<RabbitMqOptions>(builder.Configuration.GetSection(RabbitMqOptions.Section));
+    builder.Services.AddSingleton<RabbitMqConnectionProvider>();
+    builder.Services.AddScoped<INotificationService, RabbitMqNotificationPublisher>();
+}
 
 // Server-side state for the pending OTP challenge
 builder.Services.AddDistributedMemoryCache();

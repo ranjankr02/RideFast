@@ -1,0 +1,260 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "RideFast — Current Architecture (Monolith)",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "animation": "trace",
+    "views": [
+      {
+        "id": "request-path",
+        "label": "Booking request path",
+        "focus": [
+          "browser",
+          "web",
+          "ef",
+          "sqlite"
+        ],
+        "note": "A booking goes from the browser through MVC and EF Core into the SQLite file."
+      },
+      {
+        "id": "sign-in",
+        "label": "Sign-in with OTP",
+        "focus": [
+          "browser",
+          "web",
+          "auth",
+          "notif"
+        ],
+        "note": "Password check, OTP generated and sent, then the auth cookie is issued."
+      },
+      {
+        "id": "blocking-notify",
+        "label": "Blocking notifications",
+        "focus": [
+          "web",
+          "notif",
+          "smtp",
+          "sms"
+        ],
+        "note": "The HTTP request waits while email and SMS are sent in-process."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "browser",
+      "type": "external",
+      "label": "Browser",
+      "sublabel": "Razor views",
+      "pos": [
+        40,
+        290
+      ],
+      "size": [
+        130,
+        64
+      ]
+    },
+    {
+      "id": "auth",
+      "type": "security",
+      "label": "Cookie Auth + OTP",
+      "sublabel": "AuthController",
+      "pos": [
+        260,
+        120
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "tag": "7-day cookie"
+    },
+    {
+      "id": "web",
+      "type": "backend",
+      "label": "CabBookingApp",
+      "sublabel": "ASP.NET Core 8 MVC",
+      "brand": "dotnet",
+      "pos": [
+        260,
+        290
+      ],
+      "size": [
+        170,
+        64
+      ]
+    },
+    {
+      "id": "ef",
+      "type": "backend",
+      "label": "AppDbContext",
+      "sublabel": "EF Core 8",
+      "pos": [
+        520,
+        290
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "sqlite",
+      "type": "database",
+      "label": "SQLite",
+      "sublabel": "Users · Bookings · OTPs",
+      "brand": "sqlite",
+      "pos": [
+        760,
+        290
+      ],
+      "size": [
+        170,
+        64
+      ]
+    },
+    {
+      "id": "notif",
+      "type": "backend",
+      "label": "NotificationService",
+      "sublabel": "in-process, awaited",
+      "pos": [
+        260,
+        460
+      ],
+      "size": [
+        170,
+        64
+      ]
+    },
+    {
+      "id": "smtp",
+      "type": "external",
+      "label": "Gmail SMTP",
+      "sublabel": "MailKit :587",
+      "pos": [
+        1040,
+        370
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "sms",
+      "type": "external",
+      "label": "Fast2SMS",
+      "sublabel": "HTTPS API",
+      "pos": [
+        1040,
+        480
+      ],
+      "size": [
+        150,
+        64
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Azure App Service: RideFast",
+      "wraps": [
+        "auth",
+        "web",
+        "ef",
+        "sqlite",
+        "notif"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "browser-web",
+      "from": "browser",
+      "to": "web",
+      "label": "HTTPS",
+      "variant": "emphasis"
+    },
+    {
+      "id": "web-auth",
+      "from": "web",
+      "to": "auth",
+      "label": "sign-in",
+      "variant": "security",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "web-ef",
+      "from": "web",
+      "to": "ef",
+      "label": "LINQ"
+    },
+    {
+      "id": "ef-sqlite",
+      "from": "ef",
+      "to": "sqlite",
+      "label": "SQL"
+    },
+    {
+      "id": "web-notif",
+      "from": "web",
+      "to": "notif",
+      "label": "sync call",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        345,
+        407
+      ]
+    },
+    {
+      "id": "notif-smtp",
+      "from": "notif",
+      "to": "smtp",
+      "label": "email"
+    },
+    {
+      "id": "notif-sms",
+      "from": "notif",
+      "to": "sms",
+      "label": "SMS",
+      "variant": "dashed",
+      "labelAt": [
+        890,
+        505
+      ]
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Single process",
+      "items": [
+        "MVC controllers call EF Core and notifications directly",
+        "Routes and FAQ are static in-memory lists"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Pain points",
+      "items": [
+        "OTP/booking requests wait on SMTP",
+        "SQLite file lives on the App Service disk"
+      ]
+    },
+    {
+      "dot": "rose",
+      "title": "Security",
+      "items": [
+        "Cookie auth + OTP second factor",
+        "PBKDF2 password hashes"
+      ]
+    }
+  ]
+}

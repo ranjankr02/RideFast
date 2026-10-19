@@ -106,7 +106,7 @@ public class BookingsController : Controller
             var delivered = await _notify.SendBookingConfirmationAsync(booking, user);
 
             TempData["Success"] = delivered
-                ? "Booking confirmed! A confirmation has been sent to your contact."
+                ? "Booking confirmed! You'll receive a confirmation message shortly."
                 : "Booking confirmed! We could not send the confirmation message — please note your booking id.";
             return RedirectToAction(nameof(Index));
         }

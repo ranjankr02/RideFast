@@ -1,0 +1,338 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "RideFast — Target Architecture (CouchDB + RabbitMQ)",
+    "locale": "en",
+    "quality_profile": "showcase",
+    "animation": "trace",
+    "views": [
+      {
+        "id": "request-path",
+        "label": "Booking request",
+        "focus": [
+          "browser",
+          "web",
+          "couch"
+        ],
+        "note": "The web app saves the booking document to CouchDB and returns immediately."
+      },
+      {
+        "id": "publish",
+        "label": "Publish event",
+        "focus": [
+          "web",
+          "rabbit"
+        ],
+        "note": "OtpRequested / BookingConfirmed is published to the ridefast.notifications exchange."
+      },
+      {
+        "id": "deliver",
+        "label": "Deliver notification",
+        "focus": [
+          "rabbit",
+          "notif",
+          "notiflog",
+          "smtp",
+          "sms"
+        ],
+        "note": "The worker consumes, dedupes by MessageId, sends email/SMS, then acks."
+      },
+      {
+        "id": "failure",
+        "label": "Failure path",
+        "focus": [
+          "rabbit",
+          "dlq",
+          "notif"
+        ],
+        "note": "Failed sends are retried via a TTL queue, then dead-lettered."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "browser",
+      "type": "external",
+      "label": "Browser",
+      "sublabel": "Razor views",
+      "pos": [
+        40,
+        300
+      ],
+      "size": [
+        130,
+        64
+      ]
+    },
+    {
+      "id": "auth",
+      "type": "security",
+      "label": "Cookie Auth + OTP",
+      "sublabel": "AuthController",
+      "pos": [
+        280,
+        120
+      ],
+      "size": [
+        170,
+        64
+      ]
+    },
+    {
+      "id": "web",
+      "type": "backend",
+      "label": "RideFast Web",
+      "sublabel": "ASP.NET Core 8 MVC",
+      "brand": "dotnet",
+      "pos": [
+        280,
+        300
+      ],
+      "size": [
+        170,
+        64
+      ],
+      "tag": "publisher + outbox"
+    },
+    {
+      "id": "couch",
+      "type": "database",
+      "label": "CouchDB",
+      "sublabel": "users · bookings · otps",
+      "pos": [
+        280,
+        490
+      ],
+      "size": [
+        170,
+        64
+      ]
+    },
+    {
+      "id": "rabbit",
+      "type": "messagebus",
+      "label": "RabbitMQ",
+      "sublabel": "ridefast.notifications",
+      "brand": "rabbitmq",
+      "pos": [
+        580,
+        300
+      ],
+      "size": [
+        180,
+        64
+      ],
+      "tag": "topic exchange"
+    },
+    {
+      "id": "dlq",
+      "type": "messagebus",
+      "label": "Retry + DLQ",
+      "sublabel": "TTL retry, dead-letter",
+      "pos": [
+        580,
+        490
+      ],
+      "size": [
+        180,
+        64
+      ]
+    },
+    {
+      "id": "notif",
+      "type": "backend",
+      "label": "Notification Service",
+      "sublabel": ".NET Worker Service",
+      "brand": "dotnet",
+      "pos": [
+        890,
+        300
+      ],
+      "size": [
+        180,
+        64
+      ]
+    },
+    {
+      "id": "notiflog",
+      "type": "database",
+      "label": "CouchDB",
+      "sublabel": "notification_log",
+      "pos": [
+        890,
+        490
+      ],
+      "size": [
+        180,
+        64
+      ]
+    },
+    {
+      "id": "smtp",
+      "type": "external",
+      "label": "Gmail SMTP",
+      "sublabel": "MailKit :587",
+      "pos": [
+        1180,
+        220
+      ],
+      "size": [
+        150,
+        64
+      ]
+    },
+    {
+      "id": "sms",
+      "type": "external",
+      "label": "Fast2SMS",
+      "sublabel": "HTTPS API",
+      "pos": [
+        1180,
+        380
+      ],
+      "size": [
+        150,
+        64
+      ]
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Web app (Azure App Service)",
+      "wraps": [
+        "auth",
+        "web",
+        "couch"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "Message broker",
+      "wraps": [
+        "rabbit",
+        "dlq"
+      ]
+    },
+    {
+      "kind": "region",
+      "label": "Notification microservice",
+      "wraps": [
+        "notif",
+        "notiflog"
+      ]
+    }
+  ],
+  "connections": [
+    {
+      "id": "browser-web",
+      "from": "browser",
+      "to": "web",
+      "label": "HTTPS",
+      "variant": "emphasis"
+    },
+    {
+      "id": "web-auth",
+      "from": "web",
+      "to": "auth",
+      "label": "sign-in",
+      "variant": "security",
+      "fromSide": "top",
+      "toSide": "bottom"
+    },
+    {
+      "id": "web-couch",
+      "from": "web",
+      "to": "couch",
+      "label": "HTTP/JSON",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        365,
+        427
+      ]
+    },
+    {
+      "id": "web-rabbit",
+      "from": "web",
+      "to": "rabbit",
+      "label": "publish",
+      "variant": "emphasis"
+    },
+    {
+      "id": "rabbit-notif",
+      "from": "rabbit",
+      "to": "notif",
+      "label": "consume + ack",
+      "variant": "emphasis"
+    },
+    {
+      "id": "rabbit-dlq",
+      "from": "rabbit",
+      "to": "dlq",
+      "label": "on failure",
+      "variant": "dashed",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        670,
+        427
+      ]
+    },
+    {
+      "id": "notif-log",
+      "from": "notif",
+      "to": "notiflog",
+      "label": "dedupe",
+      "fromSide": "bottom",
+      "toSide": "top",
+      "labelAt": [
+        980,
+        427
+      ]
+    },
+    {
+      "id": "notif-smtp",
+      "from": "notif",
+      "to": "smtp",
+      "label": "email"
+    },
+    {
+      "id": "notif-sms",
+      "from": "notif",
+      "to": "sms",
+      "label": "SMS",
+      "variant": "dashed"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "emerald",
+      "title": "Events (RideFast.Contracts)",
+      "items": [
+        "OtpRequested → otp.requested",
+        "BookingConfirmed → booking.confirmed",
+        "Messages carry all data; no shared DB"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Reliability",
+      "items": [
+        "Persistent messages + publisher confirms",
+        "Booking outbox relays unsent events",
+        "Idempotent consumer keyed on MessageId"
+      ]
+    },
+    {
+      "dot": "violet",
+      "title": "CouchDB",
+      "items": [
+        "String _id + _rev optimistic concurrency",
+        "Claim docs enforce unique email/mobile",
+        "Mango indexes; map/reduce for admin stats"
+      ]
+    }
+  ]
+}
