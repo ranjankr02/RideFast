@@ -14,6 +14,11 @@
     <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1" />
   </ItemGroup>
 
+  <!-- Launchers used when this worker runs as an Azure App Service continuous WebJob. -->
+  <ItemGroup>
+    <None Update="run.cmd;run.sh" CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\RideFast.Contracts\RideFast.Contracts.csproj" />
   </ItemGroup>

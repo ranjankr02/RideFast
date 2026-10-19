@@ -30,6 +30,11 @@ jobs:
         # Publish only the web app; RideFast.NotificationService is deployed separately.
         run: dotnet publish CabBookingApp/CabBookingApp.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
+      # The notification worker runs as a continuous WebJob in the same App Service,
+      # so it shares the app's environment variables (RabbitMq__Uri, Notifications__Email__*).
+      - name: dotnet publish notification worker as WebJob
+        run: dotnet publish RideFast.NotificationService/RideFast.NotificationService.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp/App_Data/jobs/continuous/NotificationService
+
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
